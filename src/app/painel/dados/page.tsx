@@ -418,7 +418,7 @@ export default function ConfigPage() {
                                             </button>
                                             <div>
                                                 <h3 className="text-xl font-medium text-stone-900">Finalizar Upgrade</h3>
-                                                <p className="text-sm text-stone-500">Plano escolhido: <span className="font-semibold text-stone-800">{selectedPlan.name}</span> - {selectedPlan.priceDisplay}</p>
+                                                <p className="text-sm text-stone-500">Plano escolhido: <span className="font-semibold text-stone-800">{selectedPlan?.name}</span> - {selectedPlan?.priceDisplay}</p>
                                             </div>
                                         </div>
 
@@ -468,7 +468,7 @@ export default function ConfigPage() {
                                                     </div>
                                                     <button type="submit" disabled={saving} className="w-full py-3.5 rounded-xl bg-stone-900 text-white text-sm font-medium hover:bg-stone-800 transition disabled:opacity-50 flex items-center justify-center gap-2 mt-4">
                                                         {saving ? <Icon icon="solar:refresh-linear" width={18} className="animate-spin" /> : <Icon icon="solar:shield-check-bold" width={18} />}
-                                                        {saving ? "Processando..." : `Pagar ${selectedPlan.priceDisplay}`}
+                                                        {saving ? "Processando..." : `Pagar ${selectedPlan?.priceDisplay}`}
                                                     </button>
                                                 </form>
                                             ) : (
