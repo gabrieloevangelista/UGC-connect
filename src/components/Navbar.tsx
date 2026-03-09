@@ -7,14 +7,14 @@ const navLinks = [
     { href: "#vantagens", label: "O Valor" },
     { href: "#criadores", label: "Criadores" },
     { href: "#formatos", label: "Formatos" },
-    { href: "#planos", label: "Planos" },
+    { href: "#contato", label: "Contato" },
 ];
 
 const mobileNavLinks = [
     { href: "#vantagens", label: "Vantagens" },
     { href: "#formatos", label: "Formatos" },
     { href: "#criadores", label: "Criadores" },
-    { href: "#planos", label: "Planos" },
+    { href: "#contato", label: "Contato" },
     { href: "#faq", label: "FAQ" },
 ];
 

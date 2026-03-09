@@ -114,10 +114,10 @@ export default function HeroSection() {
                             Content) para escalar anúncios no TikTok, Reels e Ads.
                         </p>
                         <a
-                            href="#planos"
+                            href="#contato"
                             className="group flex items-center gap-3 bg-white text-stone-950 pl-6 pr-2 py-2 rounded-full transition hover:bg-stone-200"
                         >
-                            <span className="text-sm font-medium">Ver Planos</span>
+                            <span className="text-sm font-medium">Falar com Consultor</span>
                             <div className="w-8 h-8 bg-stone-950 rounded-full flex items-center justify-center text-white group-hover:rotate-45 transition duration-300">
                                 <Icon icon="solar:arrow-right-linear" width={18} />
                             </div>
