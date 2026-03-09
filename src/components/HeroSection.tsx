@@ -86,7 +86,7 @@ export default function HeroSection() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     ref={heroBgRef}
-                    src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=2874&auto=format&fit=crop"
+                    src="https://euronewsweek.co.uk/wp-content/uploads/2025/04/How-to-Start-as-a-UGC-Creator-in-2025-Euronewsweek.png"
                     alt="Criador de conteúdo gravando vídeo"
                     className="absolute inset-0 w-full h-[120%] -top-[10%] object-cover filter brightness-[0.4] sepia-[0.1] will-change-transform"
                 />
