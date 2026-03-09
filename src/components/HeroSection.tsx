@@ -111,7 +111,7 @@ export default function HeroSection() {
                     <div className="flex flex-col items-start lg:items-end justify-end gap-8">
                         <p className="text-lg md:text-xl font-light leading-relaxed max-w-md text-left lg:text-right opacity-90">
                             Conectamos marcas aos melhores criadores de UGC (User Generated
-                            Content) para escalar anúncios no TikTok, Reels e Ads.
+                            Content) para escalar suas vendas no TikTok Shop, Reels e Ads.
                         </p>
                         <a
                             href="#contato"

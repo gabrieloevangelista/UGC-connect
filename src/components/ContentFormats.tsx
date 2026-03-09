@@ -49,6 +49,15 @@ const formats: FormatItem[] = [
         desc: "Imagens do produto no cotidiano. Perfeito para preencher o feed do Instagram, catálogos de e-commerce e criativos estáticos de alta performance.",
         tag: "Visual Content",
     },
+    {
+        number: "05",
+        title: "Vídeos para TikTok Shop",
+        shortTitle: "TikTok Shop",
+        image:
+            "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=2874&auto=format&fit=crop",
+        desc: "Conteúdo otimizado para vendas diretas. Mostre o produto em ação com foco total em conversão no marketplace do TikTok.",
+        tag: "E-commerce",
+    },
 ];
 
 export default function ContentFormats() {

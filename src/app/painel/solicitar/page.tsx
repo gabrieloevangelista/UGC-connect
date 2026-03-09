@@ -11,6 +11,7 @@ const formatTypes = [
     { value: "testimonial", label: "Depoimento", icon: "solar:chat-round-dots-linear" },
     { value: "lifestyle", label: "Lifestyle / Uso", icon: "solar:heart-linear" },
     { value: "tutorial", label: "Tutorial / How-To", icon: "solar:book-linear" },
+    { value: "tiktok_shop", label: "TikTok Shop", icon: "solar:bag-heart-linear" },
 ];
 
 export default function SolicitarPage() {
