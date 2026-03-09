@@ -1,0 +1,904 @@
+<html lang="pt-BR" class="scroll-smooth"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UGC Connect - Encontre Criadores de Conteúdo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<!-- GSAP & ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Inter', sans-serif; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.snap-x { scroll-snap-type: x mandatory; }
+.snap-center { scroll-snap-align: center; }
+/* Efecto de revelado de texto */
+.word-wrapper {
+display: inline-block;
+overflow: hidden;
+vertical-align: bottom;
+padding-bottom: 2px;
+margin-right: 0.25em;
+}
+.word-inner {
+display: inline-block;
+transform: translateY(110%);
+}
+/* Transiciones suaves para la funcionalidad */
+.faq-content {
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+opacity: 0;
+}
+.faq-content.active {
+opacity: 1;
+}
+</style>
+<link id="all-fonts-link-font-geist" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;display=swap"><style id="all-fonts-style-font-geist">.font-geist { font-family: 'Geist', sans-serif !important; }</style></head>
+<body class="antialiased selection:bg-stone-800 selection:text-white text-stone-800 bg-stone-50">
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-stone-900 z-[60] transform translate-x-full transition-transform duration-300 flex flex-col justify-center items-center text-white gap-8 md:hidden">
+        <button id="close-menu" class="absolute top-6 right-6 p-2">
+            <iconify-icon icon="solar:close-circle-linear" width="32"></iconify-icon>
+        </button>
+        <a href="#vantagens" class="text-2xl font-light mobile-link">Vantagens</a>
+        <a href="#formatos" class="text-2xl font-light mobile-link">Formatos</a>
+        <a href="#criadores" class="text-2xl font-light mobile-link">Criadores</a>
+        <a href="#planos" class="text-2xl font-light mobile-link">Planos</a>
+        <a href="#faq" class="text-2xl font-light mobile-link">FAQ</a>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center text-white mix-blend-difference">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+            <iconify-icon icon="solar:video-frame-linear" width="28" height="28"></iconify-icon>
+            <span class="text-xl font-medium tracking-tighter uppercase">UGC Connect</span>
+        </div>
+        
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium tracking-tight bg-stone-900/10 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
+            <a href="#vantagens" class="hover:opacity-70 transition">O Valor</a>
+            <a href="#criadores" class="hover:opacity-70 transition">Criadores</a>
+            <a href="#formatos" class="hover:opacity-70 transition">Formatos</a>
+            <a href="#planos" class="hover:opacity-70 transition">Planos</a>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <button class="bg-white text-stone-950 px-5 py-2.5 rounded-full text-xs font-medium hover:bg-stone-200 transition hidden md:block">
+                Acesso Empresas
+            </button>
+            <!-- Mobile Toggle -->
+            <button id="open-menu" class="md:hidden text-white">
+                <iconify-icon icon="solar:hamburger-menu-linear" width="28"></iconify-icon>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero-section" class="relative w-full h-screen min-h-[800px] overflow-hidden">
+        <!-- Parallax Background Image -->
+        <div class="absolute inset-0 w-full h-full overflow-hidden">
+            <img id="hero-bg" src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&amp;w=2874&amp;auto=format&amp;fit=crop" alt="Criador de conteúdo gravando vídeo" class="absolute inset-0 w-full h-[120%] -top-[10%] object-cover filter brightness-[0.4] sepia-[0.1] will-change-transform">
+        </div>
+        
+        <div class="flex flex-col md:px-12 md:pb-24 text-white pr-6 pb-12 pl-6 absolute top-0 right-0 bottom-0 left-0 justify-end z-10">
+            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
+                <div class="">
+                    <div class="flex items-center gap-2 mb-6 opacity-80">
+                        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                        <span class="text-xs font-medium tracking-wide uppercase">Plataforma Global • 100% Online</span>
+                    </div>
+                    <!-- Animated Reveal Text -->
+                    <h1 class="reveal-text leading-[1.05] md:text-7xl text-5xl tracking-tighter mb-6 font-light">Conteúdo autêntico que converte.</h1>
+                </div>
+                <div class="flex flex-col items-start lg:items-end justify-end gap-8">
+                    <p class="text-lg md:text-xl font-light leading-relaxed max-w-md text-left lg:text-right opacity-90">
+                        Conectamos marcas aos melhores criadores de UGC (User Generated Content) para escalar anúncios no TikTok, Reels e Ads.
+                    </p>
+                    <a href="#planos" class="group flex items-center gap-3 bg-white text-stone-950 pl-6 pr-2 py-2 rounded-full transition hover:bg-stone-200">
+                        <span class="text-sm font-medium">Ver Planos</span>
+                        <div class="w-8 h-8 bg-stone-950 rounded-full flex items-center justify-center text-white group-hover:rotate-45 transition duration-300">
+                            <iconify-icon icon="solar:arrow-right-linear" width="18"></iconify-icon>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="max-w-7xl mx-auto w-full flex justify-between text-xs font-medium uppercase tracking-widest opacity-50 mt-12 border-t border-white/20 pt-6">
+                <span>User Generated Content</span>
+                <span>UGC Connect Pro</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section 01: Value Proposition -->
+    <section id="vantagens" class="px-6 py-24 md:px-12 max-w-[1600px] mx-auto">
+        <div class="flex justify-between items-baseline mb-12 border-b border-stone-200 pb-4">
+            <span class="text-xs text-stone-400 uppercase tracking-widest">/ 01 O Valor do UGC</span>
+            <span class="text-xs text-stone-400 font-mono">[ 01 ]</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left Image Card -->
+            <div class="lg:col-span-4 relative group overflow-hidden rounded-2xl h-[500px]">
+                <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-105 filter grayscale-[0.2]" alt="Criadora de conteúdo">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-900/90 to-transparent flex flex-col justify-end p-8">
+                    <p class="text-white text-lg font-light leading-snug">"Pessoas confiam em pessoas. O conteúdo autêntico quebra a barreira do anúncio tradicional."</p>
+                    <div class="flex items-center gap-1 text-[#E0D8C8] mt-4">
+                        <iconify-icon icon="solar:chart-square-linear" width="14"></iconify-icon>
+                        <span class="text-white text-sm font-medium ml-1">Especialistas em ROAS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Content -->
+            <div class="lg:col-span-4 flex flex-col justify-between h-full gap-8">
+                <div class="">
+                    <!-- Animated Reveal Text -->
+                    <h2 class="reveal-text text-3xl tracking-tight text-stone-900 leading-tight mb-8 font-light">" Não é apenas um vídeo, é uma prova social que gera identificação imediata com sua marca. "</h2>
+                    <p class="text-stone-500 text-base leading-relaxed">Nossa plataforma cuida de todo o processo: desde o briefing e curadoria dos criadores até a entrega do material editado e pronto para uso em campanhas.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-stone-100 shadow-sm flex-1 flex flex-col justify-end relative overflow-hidden group">
+                     <img src="https://images.unsplash.com/photo-1622353340801-9c17fbb8f8ce?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-90 transition duration-700 group-hover:scale-105 filter sepia-[0.2]" alt="Equipamento de gravação">
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="text-stone-500 text-sm max-w-[200px]">Base Curada de Criadores</p>
+                    <button class="bg-stone-900 text-white pl-5 pr-2 py-2 rounded-full flex items-center gap-2 hover:bg-stone-800 transition">
+                        <span class="text-xs font-medium">Ver Portfólio</span>
+                        <div class="bg-white text-black rounded-full p-1">
+                            <iconify-icon icon="solar:arrow-right-linear" width="12"></iconify-icon>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Stats Card -->
+            <div class="lg:col-span-4 bg-[#2D302B] rounded-2xl p-8 flex flex-col justify-between min-h-[500px] relative overflow-hidden text-[#E0D8C8]">
+                <!-- Decorative pattern -->
+                <div class="absolute top-0 right-0 p-8 opacity-10 text-white">
+                   <iconify-icon icon="solar:graph-up-linear" width="120" height="120"></iconify-icon>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-[#E0D8C8] rounded-full animate-pulse"></div>
+                    <span class="text-xs font-medium uppercase tracking-wide">Performance Comprovada</span>
+                </div>
+
+                <div>
+                    <h3 class="text-6xl tracking-tighter text-white mb-2 font-light">+73%</h3>
+                    <p class="text-[#E0D8C8] text-sm opacity-80 mb-8">Aumento médio na taxa de conversão ao usar UGC em vez de criativos de estúdio.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-full bg-white/10 h-10 rounded-full overflow-hidden flex items-center px-4 relative">
+                                <span class="relative z-10 text-xs font-medium text-white">Engajamento TikTok</span>
+                                <div class="absolute left-0 top-0 h-full bg-[#E0D8C8]/20 w-[92%]"></div>
+                            </div>
+                            <span class="text-sm font-medium text-white">92%</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-full bg-white/10 h-10 rounded-full overflow-hidden flex items-center px-4 relative">
+                                <span class="relative z-10 text-xs font-medium text-white">Redução de CPA (Custo)</span>
+                                <div class="absolute left-0 top-0 h-full bg-[#E0D8C8]/20 w-[65%]"></div>
+                            </div>
+                            <span class="text-sm font-medium text-white">65%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partner Logos -->
+    <div class="w-full overflow-hidden border-y border-stone-200 bg-white py-12 relative flex items-center justify-center" style="-webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);">
+    <style>
+        @keyframes scroll-loop {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-scroll-infinite {
+            animation: scroll-loop 40s linear infinite;
+        }
+        .animate-scroll-infinite:hover {
+            animation-play-state: paused;
+        }
+    </style>
+    <div class="flex w-max animate-scroll-infinite items-center">
+        <!-- Logo Set 1 -->
+        <div class="flex items-center gap-20 px-10 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500 ease-out text-stone-800">
+            <iconify-icon icon="simple-icons:tiktok" width="48" height="48"></iconify-icon>
+            <iconify-icon icon="simple-icons:meta" width="64" height="64"></iconify-icon>
+            <iconify-icon icon="simple-icons:shopify" width="56" height="56"></iconify-icon>
+            <iconify-icon icon="simple-icons:stripe" width="64" height="64"></iconify-icon>
+            <iconify-icon icon="simple-icons:notion" width="56" height="56"></iconify-icon>
+            <iconify-icon icon="simple-icons:vimeo" width="56" height="56"></iconify-icon>
+            <iconify-icon icon="simple-icons:framer" width="48" height="48"></iconify-icon>
+            <iconify-icon icon="simple-icons:pinterest" width="48" height="48"></iconify-icon>
+        </div>
+        <!-- Logo Set 2 -->
+        <div class="flex items-center gap-20 px-10 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-500 ease-out text-stone-800">
+             <iconify-icon icon="simple-icons:tiktok" width="48" height="48"></iconify-icon>
+             <iconify-icon icon="simple-icons:meta" width="64" height="64"></iconify-icon>
+             <iconify-icon icon="simple-icons:shopify" width="56" height="56"></iconify-icon>
+             <iconify-icon icon="simple-icons:stripe" width="64" height="64"></iconify-icon>
+             <iconify-icon icon="simple-icons:notion" width="56" height="56"></iconify-icon>
+             <iconify-icon icon="simple-icons:vimeo" width="56" height="56"></iconify-icon>
+             <iconify-icon icon="simple-icons:framer" width="48" height="48"></iconify-icon>
+             <iconify-icon icon="simple-icons:pinterest" width="48" height="48"></iconify-icon>
+        </div>
+    </div>
+</div>
+
+    <!-- Section 03: Featured Creators -->
+    <section id="criadores" class="px-6 py-24 md:px-12 max-w-[1600px] mx-auto">
+    <div class="bg-[#2D302B] rounded-[40px] p-8 md:p-16 text-white relative overflow-hidden">
+        <!-- Decorative bg noise/gradient optional -->
+        <div class="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+             <iconify-icon icon="solar:clapperboard-play-linear" width="400" height="400"></iconify-icon>
+        </div>
+
+        <div class="flex justify-between items-baseline mb-12 border-b border-white/10 pb-4 relative z-10">
+            <span class="text-xs text-[#E0D8C8]/60 uppercase tracking-widest">/ 02 Processo</span>
+            <span class="text-xs text-[#E0D8C8]/60 font-mono">[ 02 ]</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 relative z-10">
+            <!-- Left Side -->
+            <div class="flex flex-col justify-between order-2 lg:order-1 gap-12">
+                <div class="">
+                    <div class="flex items-start justify-between gap-6">
+                        <h2 class="text-4xl lg:text-5xl tracking-tight text-white mb-8 max-w-md font-light">
+                            Match perfeito entre sua marca e o criador.
+                        </h2>
+                        <div class="border border-[#E0D8C8]/20 rounded-full p-2 hidden lg:block shrink-0">
+                            <iconify-icon icon="solar:users-group-two-rounded-linear" width="24" height="24" class="text-[#E0D8C8]"></iconify-icon>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-3 mb-8">
+                        <span class="px-4 py-2 rounded-full border border-[#E0D8C8]/20 text-xs font-medium text-[#E0D8C8] hover:bg-[#E0D8C8] hover:text-[#2D302B] transition cursor-pointer">Unboxing</span>
+                        <span class="px-4 py-2 rounded-full border border-[#E0D8C8]/20 text-xs font-medium text-[#E0D8C8] hover:bg-[#E0D8C8] hover:text-[#2D302B] transition cursor-pointer">Testimonials</span>
+                        <span class="px-4 py-2 rounded-full border border-[#E0D8C8]/20 text-xs font-medium text-[#E0D8C8] hover:bg-[#E0D8C8] hover:text-[#2D302B] transition cursor-pointer">TikTok Trends</span>
+                        <span class="px-4 py-2 rounded-full border border-[#E0D8C8]/20 text-xs font-medium text-[#E0D8C8] hover:bg-[#E0D8C8] hover:text-[#2D302B] transition cursor-pointer">Voiceover</span>
+                        <span class="px-4 py-2 rounded-full border border-[#E0D8C8]/20 text-xs font-medium text-[#E0D8C8] hover:bg-[#E0D8C8] hover:text-[#2D302B] transition cursor-pointer">Lifestyle</span>
+                    </div>
+                </div>
+
+                <div class="bg-[#3A3D37] border border-white/5 rounded-2xl p-6 flex gap-6 items-center">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&amp;w=1964&amp;auto=format&amp;fit=crop" class="w-20 h-20 rounded-xl object-cover grayscale opacity-80" alt="Criadora de conteúdo UGC">
+                    <div class="">
+                        <h4 class="text-lg font-medium text-white">Sarah Silva</h4>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xs text-white/50">UGC Creator • Beauty &amp; Tech</span>
+                        </div>
+                        <p class="text-sm text-white/70 max-w-xs mb-4">"Crio vídeos dinâmicos que conectam o produto ao dia a dia real do consumidor."</p>
+                        <button class="bg-[#E0D8C8] text-[#2D302B] pl-4 pr-1 py-1.5 rounded-full flex items-center gap-2 text-xs font-medium w-max hover:bg-white transition">
+                            Solicitar Briefing
+                            <div class="bg-[#2D302B] text-[#E0D8C8] rounded-full p-1">
+                                <iconify-icon icon="solar:arrow-right-linear" width="12"></iconify-icon>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side (Image + Card) -->
+            <div class="relative rounded-3xl overflow-hidden h-[500px] lg:h-[600px] group order-1 lg:order-2">
+                <img src="https://images.unsplash.com/photo-1581456495146-65a71b2c8e52?q=80&amp;w=1972&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition duration-700 opacity-90 grayscale-[0.3]" alt="Gravação de conteúdo pelo celular">
+                
+                <!-- Floating Card -->
+                <div class="absolute top-6 right-6 bg-[#3A3D37]/90 backdrop-blur-md p-5 rounded-2xl shadow-xl w-72 border border-white/10">
+                    <div class="flex justify-between items-end mb-4 border-b border-white/10 pb-2">
+                        <div class="">
+                            <span class="text-[10px] uppercase text-[#E0D8C8]/60 font-bold tracking-wider">Métricas de Campanha</span>
+                            <div class="text-2xl tracking-tight font-light text-white">ROAS <span class="text-xs text-white/40 font-normal">Ads</span></div>
+                        </div>
+                        <div class="text-right">
+                             <span class="text-[10px] uppercase text-[#E0D8C8]/60 font-bold tracking-wider">Custo/Conv.</span>
+                             <div class="text-2xl tracking-tight font-light text-[#a7f3d0]">-45%</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between gap-1 h-10 items-end">
+                        <div class="h-[40%] w-2 bg-white/10 rounded-full"></div>
+                        <div class="h-[50%] w-2 bg-white/10 rounded-full"></div>
+                        <div class="h-[45%] w-2 bg-white/10 rounded-full"></div>
+                        <div class="h-[60%] w-2 bg-white/10 rounded-full"></div>
+                        <div class="h-[90%] w-2 bg-[#E0D8C8] rounded-full shadow-[0_0_10px_rgba(224,216,200,0.5)]"></div>
+                        <div class="h-[70%] w-2 bg-white/10 rounded-full"></div>
+                        <div class="h-[65%] w-2 bg-white/10 rounded-full"></div>
+                        <div class="h-[80%] w-2 bg-white/10 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Section 04: Content Formats (INTERACTIVE) -->
+    <section id="formatos" class="md:px-12 bg-stone-50 max-w-[1600px] border-stone-100 border rounded-[40px] mt-12 mr-auto mb-12 ml-auto pt-24 pr-6 pb-24 pl-6">
+        <div class="flex justify-between items-baseline mb-16">
+            <div class="">
+                 <span class="text-xs text-stone-400 uppercase tracking-widest block mb-4">/ 03 Formatos</span>
+                 <h2 class="text-4xl md:text-5xl tracking-tight text-stone-900 max-w-lg font-light">
+                    Conteúdo focado em performance.
+                 </h2>
+            </div>
+            <div class="hidden lg:block">
+                <p class="text-sm text-stone-500 max-w-xs text-right">Adaptado para o algoritmo de cada plataforma de mídia.</p>
+                <span class="text-xs text-stone-400 font-mono block text-right mt-2">[ 03 ]</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            
+            <!-- Left Visual (Dynamic) -->
+            <div class="relative rounded-3xl overflow-hidden h-[700px] shadow-lg transition-all duration-500">
+                <img id="class-display-image" src="https://images.unsplash.com/photo-1621600411688-4be93cd68504?q=80&amp;w=2000&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover grayscale-[0.1] transition-opacity duration-300" alt="Vídeos para Ads">
+                
+                <!-- Price Tag Widget -->
+                <div class="absolute bottom-8 left-8 right-8 bg-white p-6 rounded-2xl shadow-xl border border-stone-100 backdrop-blur-sm bg-white/95">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="">
+                             <p id="class-display-tag" class="text-xs text-stone-500 uppercase font-medium">Formato Vencedor</p>
+                             <h3 id="class-display-title" class="text-3xl tracking-tight text-stone-900 font-light">Vídeos para Ads (Paid Social)</h3>
+                        </div>
+                        <div class="bg-stone-900 text-white text-[10px] uppercase font-bold tracking-wide px-3 py-1.5 rounded">
+                            Mais Solicitado
+                        </div>
+                    </div>
+                    <div class="w-full h-1 bg-stone-100 rounded-full mb-4 overflow-hidden">
+                        <div class="w-[85%] bg-[#2D302B] h-full"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-stone-500 font-medium">
+                        <div class="flex items-center gap-1">
+                            <iconify-icon icon="solar:check-circle-linear" class="text-[#2D302B]"></iconify-icon>
+                            <span>Ganchos 3 segundos</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <iconify-icon icon="solar:check-circle-linear" class="text-[#2D302B]"></iconify-icon>
+                            <span>Chamada p/ Ação (CTA)</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <iconify-icon icon="solar:check-circle-linear" class="text-[#2D302B]"></iconify-icon>
+                            <span>Direitos Cedidos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Accordion List (Interactive) -->
+            <div class="flex flex-col gap-2" id="classes-list">
+                
+                <!-- Item 1 -->
+                <div class="class-item group p-8 rounded-2xl bg-white shadow-sm border border-stone-100 transition cursor-pointer" data-image="https://images.unsplash.com/photo-1621600411688-4be93cd68504?q=80&amp;w=2000&amp;auto=format&amp;fit=crop" data-title="Vídeos para Ads (Paid Social)" data-desc="Focados inteiramente em conversão. Utilizam ganchos fortes nos primeiros 3 segundos para reter atenção e baixar o custo por clique das suas campanhas na Meta e TikTok." data-tag="Formato Vencedor">
+                    <div class="flex items-start gap-6">
+                        <div class="w-8 h-8 rounded-full border border-stone-300 flex items-center justify-center text-xs font-mono text-stone-500 number-badge bg-stone-100">01</div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl tracking-tight text-stone-900 mb-2 font-light group-hover:text-[#2D302B] transition">Vídeos para Ads</h3>
+                            <p class="text-stone-500 text-base font-light leading-relaxed mb-4 item-desc">
+                                Focados inteiramente em conversão. Utilizam ganchos fortes nos primeiros 3 segundos para reter atenção.
+                            </p>
+                            <div class="flex items-center justify-between opacity-100 transition-opacity">
+                                <button class="text-[#2D302B] text-xs font-medium border-b border-[#2D302B] pb-0.5 hover:opacity-70">Ver exemplos</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="class-item group p-8 rounded-2xl hover:bg-white border border-transparent hover:border-stone-100 transition cursor-pointer" data-image="https://images.unsplash.com/photo-1616469829941-c7200edec809?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" data-title="Unboxing &amp; Reviews" data-desc="Demonstração real do seu produto sendo aberto e utilizado, aumentando a confiança e removendo objeções de compra dos clientes." data-tag="Prova Social">
+                    <div class="flex items-center gap-6 opacity-60 group-hover:opacity-100 transition">
+                        <div class="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-xs font-mono text-stone-400 group-hover:border-stone-400 group-hover:text-stone-600 number-badge">02</div>
+                        <div>
+                            <h3 class="text-xl font-medium tracking-tight text-stone-900">Unboxing &amp; Reviews</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="class-item group p-8 rounded-2xl hover:bg-white border border-transparent hover:border-stone-100 transition cursor-pointer" data-image="https://images.unsplash.com/photo-1512314889357-e157c22f938d?q=80&amp;w=2071&amp;auto=format&amp;fit=crop" data-title="Testemunhais (Testimonials)" data-desc="O formato clássico reinventado. Consumidores reais falando diretamente para a câmera sobre como o seu serviço resolveu um problema específico." data-tag="Confiança">
+                    <div class="flex items-center gap-6 opacity-60 group-hover:opacity-100 transition">
+                        <div class="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-xs font-mono text-stone-400 group-hover:border-stone-400 group-hover:text-stone-600 number-badge">03</div>
+                        <div>
+                            <h3 class="text-xl font-medium tracking-tight text-stone-900">Testemunhais Autênticos</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="class-item group p-8 rounded-2xl hover:bg-white border border-transparent hover:border-stone-100 transition cursor-pointer" data-image="https://images.unsplash.com/photo-1501127122-f385ca6ddd9d?q=80&amp;w=1935&amp;auto=format&amp;fit=crop" data-title="Fotos Lifestyle &amp; Static Ads" data-desc="Imagens do produto no cotidiano. Perfeito para preencher o feed do Instagram, catálogos de e-commerce e criativos estáticos de alta performance." data-tag="Visual Content">
+                    <div class="flex items-center gap-6 opacity-60 group-hover:opacity-100 transition">
+                        <div class="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-xs font-mono text-stone-400 group-hover:border-stone-400 group-hover:text-stone-600 number-badge">04</div>
+                        <div>
+                            <h3 class="text-xl font-medium tracking-tight text-stone-900">Fotos Lifestyle Estáticas</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 05: Pricing Plans (Pricing Cards Layout) -->
+    <section id="planos" class="px-6 py-24 md:px-12 max-w-[1600px] mx-auto">
+        <div class="flex justify-between items-baseline mb-8 border-b border-stone-200 pb-4">
+             <span class="text-xs text-stone-400 uppercase tracking-widest">/ 04 Planos</span>
+             <span class="text-xs text-stone-400 font-mono">[ 04 ]</span>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+            <h2 class="text-4xl tracking-tight text-stone-900 max-w-lg font-light">
+                Planos para escalar sua criação de conteúdo.
+            </h2>
+            <div class="flex gap-2">
+                 <button class="px-4 py-1.5 bg-stone-900 text-white rounded-full text-xs font-medium hover:bg-stone-700 transition">Mensal</button>
+                 <button class="px-4 py-1.5 border border-stone-200 text-stone-600 rounded-full text-xs font-medium hover:border-stone-400 transition">Trimestral (-15%)</button>
+            </div>
+        </div>
+
+        <!-- PRICING CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center max-w-6xl mx-auto mt-12">
+            <!-- Starter Plan -->
+            <div class="bg-white border border-stone-200 rounded-[32px] p-8 md:p-10 flex flex-col h-full hover:border-stone-300 transition-colors shadow-sm relative">
+                <h4 class="text-xl font-medium text-stone-900 mb-2">Starter</h4>
+                <p class="text-sm text-stone-500 mb-8 min-h-[40px]">Perfeito para o primeiro teste. Inclui vídeos variados de até 30s.</p>
+                <div class="mb-8">
+                    <span class="text-4xl md:text-5xl tracking-tight text-stone-900 font-light">R$ 1.490</span>
+                    <span class="text-xs text-stone-400 font-medium uppercase tracking-wide block mt-2">Pagamento Único</span>
+                </div>
+                <button class="w-full py-3 rounded-full border border-stone-200 text-stone-900 text-sm font-medium hover:bg-stone-50 transition mb-8">
+                    Começar Teste
+                </button>
+                <div class="flex flex-col gap-4 mt-auto">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-stone-900">O que está incluso:</span>
+                    <ul class="space-y-3 text-sm text-stone-600">
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-stone-900 mt-0.5 text-base shrink-0"></iconify-icon> 3 Vídeos UGC originais</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-stone-900 mt-0.5 text-base shrink-0"></iconify-icon> 1 Rodada de edição/revisão</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-stone-900 mt-0.5 text-base shrink-0"></iconify-icon> Direitos de uso digitais</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-stone-900 mt-0.5 text-base shrink-0"></iconify-icon> Escolha de perfil (Nicho)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Scale Plan -->
+            <div class="bg-stone-900 text-white rounded-[32px] p-8 md:p-10 flex flex-col h-full shadow-2xl relative border border-stone-800 md:scale-105 z-10">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <span class="bg-emerald-400 text-emerald-950 text-[10px] font-bold uppercase tracking-widest py-1.5 px-4 rounded-full">Recomendado</span>
+                </div>
+                <h4 class="text-xl font-medium text-white mb-2">Scale</h4>
+                <p class="text-sm text-stone-400 mb-8 min-h-[40px]">A solução completa para marcas que precisam testar criativos constantemente.</p>
+                <div class="mb-8">
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl md:text-5xl tracking-tight text-white font-light">R$ 3.990</span>
+                        <span class="text-stone-400 text-sm">/mês</span>
+                    </div>
+                    <span class="text-xs text-stone-400 font-medium uppercase tracking-wide block mt-2">Assinatura Mensal</span>
+                </div>
+                <button class="w-full py-3 rounded-full bg-white text-stone-900 text-sm font-medium hover:bg-stone-200 transition mb-8">
+                    Assinar Plano
+                </button>
+                <div class="flex flex-col gap-4 mt-auto">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-white">Tudo do Starter, mais:</span>
+                    <ul class="space-y-3 text-sm text-stone-300">
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 mt-0.5 text-base shrink-0"></iconify-icon> 15 Vídeos UGC editados/mês</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 mt-0.5 text-base shrink-0"></iconify-icon> Gestão de envio de produtos</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 mt-0.5 text-base shrink-0"></iconify-icon> Acesso a criadores Premium</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 mt-0.5 text-base shrink-0"></iconify-icon> Direitos de uso ilimitados</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 mt-0.5 text-base shrink-0"></iconify-icon> Suporte prioritário no WhatsApp</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="bg-[#2D302B] text-[#E0D8C8] rounded-[32px] p-8 md:p-10 flex flex-col h-full border border-stone-800 transition-colors shadow-sm relative">
+                <h4 class="text-xl font-medium text-white mb-2">Enterprise</h4>
+                <p class="text-sm text-[#E0D8C8]/60 mb-8 min-h-[40px]">Volume alto de vídeos, múltiplos clientes e atendimento VIP.</p>
+                <div class="mb-8 flex flex-col justify-center min-h-[56px] md:min-h-[64px]">
+                    <span class="text-3xl md:text-4xl tracking-tight text-white font-light">Personalizado</span>
+                </div>
+                <button class="w-full py-3 rounded-full border border-[#E0D8C8]/30 text-white text-sm font-medium hover:bg-[#E0D8C8]/10 transition mb-8">
+                    Falar com Consultor
+                </button>
+                <div class="flex flex-col gap-4 mt-auto">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-white">Para grandes operações:</span>
+                    <ul class="space-y-3 text-sm text-[#E0D8C8]/80">
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-white mt-0.5 text-base shrink-0"></iconify-icon> +50 Vídeos/mês</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-white mt-0.5 text-base shrink-0"></iconify-icon> Gerente de conta dedicado</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-white mt-0.5 text-base shrink-0"></iconify-icon> Material bruto (Raw) incluso</li>
+                        <li class="flex items-start gap-3"><iconify-icon icon="solar:check-circle-linear" class="text-white mt-0.5 text-base shrink-0"></iconify-icon> Múltiplas marcas/produtos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 06: Testimonials -->
+    <section class="px-6 py-24 md:px-12 max-w-[1600px] mx-auto">
+        <div class="bg-stone-100 rounded-[40px] p-8 md:p-16 relative overflow-hidden border border-stone-200">
+            <div class="flex justify-between items-start mb-12 relative z-10">
+                <div class="">
+                    <span class="text-xs text-stone-400 uppercase tracking-widest block mb-4">/ 05 Casos de Sucesso</span>
+                    <h2 class="text-3xl md:text-5xl tracking-tight text-stone-900 max-w-lg leading-tight font-light">
+                        Marcas que escalaram com UGC.
+                    </h2>
+                </div>
+                <div class="flex gap-2">
+                    <button id="prevBtn" class="w-12 h-12 rounded-full border border-stone-300 flex items-center justify-center text-stone-500 hover:bg-white hover:text-stone-900 transition duration-300 bg-white/50">
+                        <iconify-icon icon="solar:arrow-left-linear" width="20"></iconify-icon>
+                    </button>
+                    <button id="nextBtn" class="w-12 h-12 rounded-full border border-stone-300 flex items-center justify-center text-stone-500 hover:bg-white hover:text-stone-900 transition duration-300 bg-white/50">
+                        <iconify-icon icon="solar:arrow-right-linear" width="20"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slider Container -->
+            <div id="testimonial-container" class="flex overflow-x-auto gap-6 pb-4 snap-x hide-scrollbar scroll-smooth">
+                <!-- Slide 1 -->
+                <div class="min-w-[100%] md:min-w-[80%] lg:min-w-[70%] snap-center">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 bg-white rounded-3xl p-6 lg:p-0 overflow-hidden shadow-sm border border-stone-200">
+                        <div class="lg:col-span-4 h-64 lg:h-auto relative">
+                             <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&amp;w=2064&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover rounded-2xl lg:rounded-none lg:rounded-l-3xl" alt="E-commerce manager">
+                        </div>
+                        <div class="lg:col-span-8 flex flex-col justify-center lg:py-12 lg:pr-12 text-stone-800">
+                             <iconify-icon icon="solar:quote-up-bold" width="40" height="40" class="mb-6 opacity-20 text-stone-900"></iconify-icon>
+                             <blockquote class="text-xl md:text-3xl leading-snug tracking-tight mb-8 font-light">
+                                 "Reduzimos nosso CPA em 42% no primeiro mês usando os vídeos criados pela plataforma. A agilidade em testar diferentes ganchos é absurda."
+                             </blockquote>
+                             <div class="flex items-center gap-4">
+                                 <div>
+                                     <div class="font-medium text-lg text-stone-900">Lucas Marques</div>
+                                     <div class="text-xs uppercase tracking-wider text-stone-500">Head of Growth, Aura Skincare</div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="min-w-[100%] md:min-w-[80%] lg:min-w-[70%] snap-center">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 bg-white rounded-3xl p-6 lg:p-0 overflow-hidden shadow-sm border border-stone-200">
+                        <div class="lg:col-span-4 h-64 lg:h-auto relative">
+                             <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&amp;w=1974&amp;auto=format&amp;fit=crop" class="lg:rounded-none lg:rounded-l-3xl w-full h-full object-cover rounded-2xl" alt="Marketing director">
+                        </div>
+                        <div class="lg:col-span-8 flex flex-col justify-center lg:py-12 lg:pr-12 text-stone-800">
+                             <iconify-icon icon="solar:quote-up-bold" width="40" height="40" class="mb-6 opacity-20 text-stone-900"></iconify-icon>
+                             <blockquote class="text-xl md:text-3xl leading-snug tracking-tight mb-8 font-light">
+                                 "Tínhamos dificuldade em gerar conteúdo em escala para o TikTok. O plano Scale resolveu o nosso problema com qualidade de estúdio mas linguagem nativa."
+                             </blockquote>
+                             <div class="flex items-center gap-4">
+                                 <div class="">
+                                     <div class="font-medium text-lg text-stone-900">Mariana Costa</div>
+                                     <div class="text-xs uppercase tracking-wider text-stone-500">CMO, TechFit</div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 07: FAQ (INTERACTIVE) -->
+    <section id="faq" class="px-6 py-24 md:px-12 max-w-[1600px] mx-auto border-b border-stone-200">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div class="lg:col-span-4">
+                <span class="text-xs text-stone-400 uppercase tracking-widest block mb-4">/ 06 FAQ</span>
+                <h2 class="text-4xl md:text-5xl tracking-tight text-stone-900 mb-12 font-light">
+                    Perguntas Frecuentes
+                </h2>
+
+                <div class="mb-12">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-[10px] uppercase font-bold text-stone-400">Tempo de Resposta</span>
+                        <span class="text-[10px] font-bold text-stone-400">&lt; 24 Horas</span>
+                    </div>
+                    <div class="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-[#2D302B] w-[98%] h-full"></div>
+                    </div>
+                </div>
+
+                <button onclick="document.getElementById('footer').scrollIntoView({behavior: 'smooth'})" class="bg-stone-900 text-white pl-6 pr-2 py-3 rounded-full flex items-center gap-4 hover:bg-stone-800 transition w-full md:w-auto justify-between md:justify-start">
+                    <span class="text-sm font-medium">Falar com Suporte</span>
+                    <div class="bg-white text-black rounded-full p-1.5">
+                        <iconify-icon icon="solar:arrow-right-linear" width="16"></iconify-icon>
+                    </div>
+                </button>
+            </div>
+
+            <div class="lg:col-span-8 space-y-6">
+                <!-- FAQ Item 1 -->
+                <div class="border-b border-stone-200 pb-6 faq-item">
+                    <div class="flex justify-between items-center cursor-pointer group toggle-faq">
+                        <h3 class="text-xl text-stone-500 group-hover:text-stone-900 transition font-light">Como os criadores são selecionados?</h3>
+                        <div class="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-400 group-hover:border-stone-900 group-hover:text-stone-900 transition icon-container">
+                            <iconify-icon icon="solar:add-linear" width="16"></iconify-icon>
+                        </div>
+                    </div>
+                    <div class="faq-content text-stone-500 text-sm leading-relaxed max-w-2xl mt-4">
+                        <p>Temos um processo de curadoria rigoroso. Avaliamos a qualidade visual, dicção, habilidade de reter atenção e adequação aos nichos. Nós fazemos o "match" entre o perfil da sua marca e os criadores da nossa base.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                 <div class="border-b border-stone-200 pb-6 faq-item">
+                    <div class="flex justify-between items-center cursor-pointer group toggle-faq">
+                        <h3 class="text-xl text-stone-500 group-hover:text-stone-900 transition font-light">De quem são os direitos dos vídeos?</h3>
+                        <div class="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-400 group-hover:border-stone-900 group-hover:text-stone-900 transition icon-container">
+                            <iconify-icon icon="solar:add-linear" width="16"></iconify-icon>
+                        </div>
+                    </div>
+                    <div class="faq-content text-stone-500 text-sm leading-relaxed max-w-2xl mt-4">
+                        <p>100% da sua marca (Licença perpétua). Uma vez entregue o material, você tem o direito total de usá-los em anúncios pagos (Meta Ads, TikTok Ads, etc), site oficial, redes orgânicas, sem limite de tempo.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="border-b border-stone-200 pb-6 faq-item">
+                    <div class="flex justify-between items-center cursor-pointer group toggle-faq">
+                        <h3 class="text-xl text-stone-500 group-hover:text-stone-900 transition font-light">Qual é o prazo de entrega dos vídeos?</h3>
+                        <div class="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-400 group-hover:border-stone-900 group-hover:text-stone-900 transition icon-container">
+                             <iconify-icon icon="solar:add-linear" width="16"></iconify-icon>
+                        </div>
+                    </div>
+                    <div class="faq-content text-stone-500 text-sm leading-relaxed max-w-2xl mt-4">
+                        <p>Após a confirmação do briefing e (se necessário) a chegada do produto físico na casa do criador, o prazo padrão para entrega do vídeo editado e pronto para uso é de 5 a 7 dias úteis.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="border-b border-stone-200 pb-6 faq-item">
+                    <div class="flex justify-between items-center cursor-pointer group toggle-faq">
+                        <h3 class="text-xl text-stone-500 group-hover:text-stone-900 transition font-light">Posso pedir alterações na edição?</h3>
+                        <div class="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center text-stone-400 group-hover:border-stone-900 group-hover:text-stone-900 transition icon-container">
+                             <iconify-icon icon="solar:add-linear" width="16"></iconify-icon>
+                        </div>
+                    </div>
+                     <div class="faq-content text-stone-500 text-sm leading-relaxed max-w-2xl mt-4">
+                        <p>Sim! Todos os nossos planos incluem 1 rodada de revisão gratuita na edição do vídeo (cortes, textos na tela, músicas) para garantir que fique exatamente como a marca precisa.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer" class="bg-[#2D302B] text-white px-6 py-24 md:px-12">
+        <div class="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-12 lg:gap-24">
+            
+            <div class="lg:col-span-1">
+                <h2 class="text-2xl tracking-tight mb-8 font-light">Escalabilidade Criativa.</h2>
+                <button class="bg-[#E0D8C8] text-[#2D302B] pl-6 pr-2 py-2 rounded-full flex items-center gap-4 hover:bg-white transition group">
+                    <span class="text-sm font-medium">Cadastrar Marca</span>
+                    <div class="bg-[#2D302B] text-[#E0D8C8] rounded-full p-1.5 group-hover:rotate-45 transition duration-300">
+                        <iconify-icon icon="solar:arrow-right-linear" width="16"></iconify-icon>
+                    </div>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 lg:col-span-3 gap-8 text-[10px] uppercase tracking-widest text-[#E0D8C8]/60">
+                <div class="space-y-8">
+                    <div class="">
+                        <span class="block mb-4 text-[#E0D8C8]">Atendimento</span>
+                        <div class="text-white normal-case text-sm font-light">Segunda - Sexta<br>09:00 - 18:00 (BRT)</div>
+                    </div>
+                    <div>
+                        <span class="block mb-4 text-[#E0D8C8]">Contato Comercial</span>
+                        <div class="text-white normal-case text-sm font-light block">contato@ugcconnect.com.br</div>
+                        <div class="text-white normal-case text-sm font-light block mt-1">+55 (11) 99999-0000</div>
+                    </div>
+                </div>
+
+                <div class="space-y-8">
+                    <div>
+                        <span class="block mb-4 text-[#E0D8C8]">Para Criadores</span>
+                        <a href="#" class="text-white normal-case text-sm font-light mb-2 hover:underline block">
+                            Aplicar como Criador
+                        </a>
+                        <a href="#" class="text-white normal-case text-sm font-light hover:underline block">
+                            Manual de Boas Práticas
+                        </a>
+                    </div>
+
+                    <div class="pt-8">
+                        <span class="block mb-4 text-[#E0D8C8]">Social</span>
+                        <div class="flex gap-2">
+                             <a href="#" class="w-8 h-8 flex items-center justify-center rounded border border-[#E0D8C8]/20 text-white hover:bg-[#E0D8C8] hover:text-[#2D302B] transition">
+                                 <iconify-icon icon="simple-icons:instagram"></iconify-icon>
+                             </a>
+                             <a href="#" class="w-8 h-8 flex items-center justify-center rounded border border-[#E0D8C8]/20 text-white hover:bg-[#E0D8C8] hover:text-[#2D302B] transition">
+                                <iconify-icon icon="simple-icons:linkedin"></iconify-icon>
+                             </a>
+                             <a href="#" class="w-8 h-8 flex items-center justify-center rounded border border-[#E0D8C8]/20 text-white hover:bg-[#E0D8C8] hover:text-[#2D302B] transition">
+                                <iconify-icon icon="simple-icons:tiktok"></iconify-icon>
+                             </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-[1600px] mx-auto mt-24 pt-8 border-t border-[#E0D8C8]/20 flex flex-col md:flex-row justify-between text-[10px] text-[#E0D8C8]/60 tracking-wider uppercase">
+            <div class="flex gap-6 mb-4 md:mb-0">
+                <a href="#" class="hover:text-white transition">Termos de Serviço</a>
+                <a href="#" class="hover:text-white transition">Política de Uso</a>
+            </div>
+            <div class="flex gap-6">
+                <!-- ANO DINÂMICO AQUI -->
+                <span>© <span id="dynamic-year"></span> UGC Connect LTDA.</span>
+                <a href="#" class="hover:text-white transition">Privacidade</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Dynamic Year Script
+        document.getElementById('dynamic-year').textContent = new Date().getFullYear();
+
+        // -------------------------
+        // GSAP ANIMATION LOGIC
+        // -------------------------
+        gsap.registerPlugin(ScrollTrigger);
+
+        function splitTextForReveal(element) {
+            const text = element.textContent.trim();
+            const words = text.split(' ');
+            element.textContent = ''; 
+            words.forEach(word => {
+                const wrapper = document.createElement('span');
+                wrapper.classList.add('word-wrapper');
+                const inner = document.createElement('span');
+                inner.classList.add('word-inner');
+                inner.textContent = word + '\u00A0'; 
+                wrapper.appendChild(inner);
+                element.appendChild(wrapper);
+            });
+        }
+        
+        const revealElements = document.querySelectorAll('.reveal-text');
+        revealElements.forEach(element => {
+            splitTextForReveal(element);
+            const innerWords = element.querySelectorAll('.word-inner');
+            gsap.to(innerWords, {
+                y: 0,
+                duration: 1.2,
+                stagger: 0.05,
+                ease: "power4.out",
+                scrollTrigger: {
+                    trigger: element,
+                    start: "top 85%", 
+                    toggleActions: "play none none reverse" 
+                }
+            });
+        });
+
+        gsap.to("#hero-bg", {
+            yPercent: 30, 
+            ease: "none",
+            scrollTrigger: {
+                trigger: "#hero-section",
+                start: "top top",
+                end: "bottom top",
+                scrub: true 
+            }
+        });
+
+        // -------------------------
+        // SLIDER LOGIC
+        // -------------------------
+        const container = document.getElementById('testimonial-container');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        if(container && nextBtn && prevBtn) {
+            nextBtn.addEventListener('click', () => {
+                container.scrollBy({ left: container.clientWidth * 0.7, behavior: 'smooth' });
+            });
+            prevBtn.addEventListener('click', () => {
+                container.scrollBy({ left: -(container.clientWidth * 0.7), behavior: 'smooth' });
+            });
+        }
+
+        // -------------------------
+        // NEW FUNCTIONALITY
+        // -------------------------
+
+        // 1. Interactive Classes (Switch Content)
+        const classItems = document.querySelectorAll('.class-item');
+        const displayImage = document.getElementById('class-display-image');
+        const displayTitle = document.getElementById('class-display-title');
+        const displayTag = document.getElementById('class-display-tag');
+
+        classItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Reset styles
+                classItems.forEach(i => {
+                    i.classList.remove('bg-white', 'shadow-sm', 'border-stone-100');
+                    i.classList.add('hover:bg-white', 'border-transparent', 'hover:border-stone-100');
+                    i.querySelector('.number-badge').classList.remove('bg-stone-100', 'text-stone-500');
+                    i.querySelector('.number-badge').classList.add('text-stone-400');
+                    
+                    // Hide description & button for inactive items
+                    const desc = i.querySelector('.item-desc');
+                    if(desc) desc.style.display = 'none'; // simple toggle for visual
+                    const btn = i.querySelector('button');
+                    if(btn) btn.parentElement.style.opacity = '0';
+                });
+
+                // Active style
+                item.classList.remove('hover:bg-white', 'border-transparent', 'hover:border-stone-100');
+                item.classList.add('bg-white', 'shadow-sm', 'border-stone-100');
+                item.querySelector('.number-badge').classList.remove('text-stone-400');
+                item.querySelector('.number-badge').classList.add('bg-stone-100', 'text-stone-500');
+
+                // Show description & btn for active
+                const activeDesc = item.querySelector('.item-desc');
+                if(activeDesc) activeDesc.style.display = 'block';
+                const activeBtn = item.querySelector('button');
+                if(activeBtn) activeBtn.parentElement.style.opacity = '1';
+
+                // Update Display Data
+                const newImage = item.getAttribute('data-image');
+                const newTitle = item.getAttribute('data-title');
+                const newTag = item.getAttribute('data-tag');
+
+                // Fade out image, swap, fade in
+                displayImage.style.opacity = '0';
+                setTimeout(() => {
+                    displayImage.src = newImage;
+                    displayTitle.textContent = newTitle;
+                    displayTag.textContent = newTag;
+                    displayImage.style.opacity = '1';
+                }, 300);
+            });
+        });
+
+        // 2. FAQ Accordion
+        const faqToggles = document.querySelectorAll('.toggle-faq');
+        faqToggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const content = toggle.parentElement.querySelector('.faq-content');
+                const icon = toggle.querySelector('.icon-container iconify-icon');
+                
+                // Close others
+                document.querySelectorAll('.faq-content').forEach(c => {
+                    if(c !== content) {
+                        c.style.maxHeight = null;
+                        c.classList.remove('active');
+                    }
+                });
+
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    content.classList.remove('active');
+                    icon.setAttribute('icon', 'solar:add-linear');
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    content.classList.add('active');
+                    icon.setAttribute('icon', 'solar:minus-linear');
+                }
+            });
+        });
+
+        // 3. Mobile Menu Toggle
+        const openMenu = document.getElementById('open-menu');
+        const closeMenu = document.getElementById('close-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        if(openMenu) openMenu.addEventListener('click', toggleMenu);
+        if(closeMenu) closeMenu.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+
+    </script>
+
+</body></html>
