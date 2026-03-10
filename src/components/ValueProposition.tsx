@@ -154,6 +154,86 @@ export default function ValueProposition() {
                     </div>
                 </div>
             </div>
+
+            {/* Strategic Pillars & Trends */}
+            <div className="mt-24">
+                <div className="flex justify-between items-baseline mb-12 border-b border-stone-200 pb-4">
+                    <span className="text-xs text-stone-400 uppercase tracking-widest">
+                        / 02 Estratégia
+                    </span>
+                    <span className="text-xs text-stone-400 font-mono">[ 02 ]</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    {[
+                        {
+                            title: "Vídeos Orgânicos",
+                            desc: "Conteúdo autêntico que gera conexão real sem parecer propaganda.",
+                            icon: "solar:camera-linear"
+                        },
+                        {
+                            title: "Conteúdo Estratégico",
+                            desc: "Planejamento focado em objetivos de negócio e funil de vendas.",
+                            icon: "solar:target-linear"
+                        },
+                        {
+                            title: "Posicionamento Digital",
+                            desc: "Consolide sua autoridade e presença em todos os canais relevantes.",
+                            icon: "solar:globe-linear"
+                        },
+                        {
+                            title: "Collab Estratégica",
+                            desc: "Parcerias com criadores alinhados aos valores da sua marca.",
+                            icon: "solar:users-group-rounded-linear"
+                        }
+                    ].map((item, index) => (
+                        <div key={index} className="bg-stone-50 p-6 rounded-2xl border border-stone-100 hover:border-stone-200 transition group">
+                            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-4 text-stone-900 group-hover:scale-110 transition border border-stone-100">
+                                <Icon icon={item.icon} width={20} />
+                            </div>
+                            <h3 className="font-medium text-stone-900 mb-2">{item.title}</h3>
+                            <p className="text-sm text-stone-500 leading-relaxed">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Founder Led Growth - Trend 2026 */}
+                <div className="bg-stone-900 rounded-3xl p-8 md:p-12 relative overflow-hidden text-white">
+                    <div className="absolute top-0 right-0 p-12 opacity-5">
+                        <Icon icon="solar:star-fall-linear" width={300} height={300} />
+                    </div>
+                    
+                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium uppercase tracking-wider mb-6 border border-emerald-500/20">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                Tendência 2026
+                            </div>
+                            <h2 className="text-3xl md:text-4xl font-light mb-6 tracking-tight">
+                                Founder Led Growth
+                            </h2>
+                            <p className="text-stone-300 text-lg leading-relaxed max-w-xl mb-8">
+                                O crescimento liderado pelo fundador é a nova fronteira da confiança digital. 
+                                Humanize sua marca colocando quem a construiu na frente das câmeras, criando 
+                                uma conexão inquebrável com sua audiência.
+                            </p>
+                            <button className="bg-white text-stone-900 px-6 py-3 rounded-full text-sm font-medium hover:bg-stone-100 transition flex items-center gap-2 group">
+                                Quero saber mais
+                                <Icon icon="solar:arrow-right-linear" className="group-hover:translate-x-1 transition" />
+                            </button>
+                        </div>
+                        <div className="relative h-64 lg:h-full min-h-[300px] rounded-2xl overflow-hidden bg-stone-800 border border-white/10">
+                            {/* Placeholder for Founder Led Growth Visual */}
+                            <div className="absolute inset-0 flex items-center justify-center text-stone-600">
+                                <div className="text-center">
+                                    <Icon icon="solar:user-speak-linear" width={64} className="mx-auto mb-4 opacity-50" />
+                                    <p className="text-sm font-mono uppercase tracking-widest opacity-50">Authentic Leadership</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     );
 }
