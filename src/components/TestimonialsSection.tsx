@@ -5,18 +5,12 @@ import { Icon } from "@iconify/react";
 
 const testimonials = [
     {
-        image:
-            "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2064&auto=format&fit=crop",
-        imageAlt: "E-commerce manager",
         quote:
             '"Reduzimos nosso CPA em 42% no primeiro mês usando os vídeos criados pela plataforma. A agilidade em testar diferentes ganchos é absurda."',
         name: "Lucas Marques",
         role: "Head of Growth, Aura Skincare",
     },
     {
-        image:
-            "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=1974&auto=format&fit=crop",
-        imageAlt: "Marketing director",
         quote:
             '"Tínhamos dificuldade em gerar conteúdo em escala para o TikTok. O plano Scale resolveu o nosso problema com qualidade de estúdio mas linguagem nativa."',
         name: "Mariana Costa",
@@ -76,16 +70,8 @@ export default function TestimonialsSection() {
                             key={i}
                             className="min-w-[100%] md:min-w-[80%] lg:min-w-[70%] snap-center"
                         >
-                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 bg-white rounded-3xl p-6 lg:p-0 overflow-hidden shadow-sm border border-stone-200">
-                                <div className="lg:col-span-4 h-64 lg:h-auto relative">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                        src={t.image}
-                                        className="w-full h-full object-cover rounded-2xl lg:rounded-none lg:rounded-l-3xl"
-                                        alt={t.imageAlt}
-                                    />
-                                </div>
-                                <div className="lg:col-span-8 flex flex-col justify-center lg:py-12 lg:pr-12 text-stone-800">
+                            <div className="bg-white rounded-3xl p-8 lg:p-12 overflow-hidden shadow-sm border border-stone-200">
+                                <div className="flex flex-col justify-center text-stone-800">
                                     <Icon
                                         icon="solar:quote-up-bold"
                                         width={40}
