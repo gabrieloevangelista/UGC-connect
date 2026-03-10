@@ -577,7 +577,7 @@ export default function ConfigPage() {
                                     </div>
                                     <div className="relative z-10">
                                         <p className="text-stone-400 text-sm font-medium uppercase tracking-wider mb-2">Saldo Disponível</p>
-                                        <h3 className="text-4xl md:text-5xl font-light tracking-tight mb-6">
+                                        <h3 className="text-4xl md:text-5xl font-light tracking-tight mb-6 font-mono">
                                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(formData.credits || 0)}
                                         </h3>
                                         
@@ -589,7 +589,7 @@ export default function ConfigPage() {
                                                     value={addCreditAmount} 
                                                     onChange={(e) => setAddCreditAmount(e.target.value)} 
                                                     placeholder="0,00" 
-                                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder-stone-500 focus:ring-2 focus:ring-white/20 focus:border-white/30 outline-none transition"
+                                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder-stone-500 focus:ring-2 focus:ring-white/20 focus:border-white/30 outline-none transition font-mono"
                                                 />
                                             </div>
                                             <button 
@@ -628,7 +628,7 @@ export default function ConfigPage() {
                                                             </div>
                                                         </div>
                                                         <div className="text-right">
-                                                            <p className={`text-sm font-medium ${tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-stone-900'}`}>
+                                                            <p className={`text-sm font-medium font-mono ${tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-stone-900'}`}>
                                                                 {tx.type === 'CREDIT' ? '+' : '-'} {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(tx.amount)}
                                                             </p>
                                                             <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-medium ${
