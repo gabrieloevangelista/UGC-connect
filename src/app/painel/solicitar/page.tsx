@@ -190,7 +190,7 @@ export default function SolicitarPage() {
                         {/* Orçamento */}
                         <div>
                             <label className="text-xs font-medium text-stone-500 uppercase tracking-wide block mb-1.5">
-                                Orçamento Disponível (Mín. R$ 700)
+                                Orçamento de Campanha Disponível (Mín. R$ 700)
                             </label>
                             <div className="relative">
                                 <span className="absolute left-4 top-3 text-stone-500 text-sm">R$</span>

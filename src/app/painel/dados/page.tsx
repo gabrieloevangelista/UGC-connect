@@ -576,14 +576,33 @@ export default function ConfigPage() {
                                         <Icon icon="solar:wallet-bold" width={120} />
                                     </div>
                                     <div className="relative z-10">
-                                        <p className="text-stone-400 text-sm font-medium uppercase tracking-wider mb-2">Saldo Disponível</p>
+                                        <p className="text-stone-400 text-sm font-medium uppercase tracking-wider mb-2">Orçamento de Campanha Disponível</p>
                                         <h3 className="text-4xl md:text-5xl font-light tracking-tight mb-6 font-mono">
                                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(formData.credits || 0)}
                                         </h3>
                                         
+                                        <div className="mb-6">
+                                            <label className="text-xs text-stone-400 uppercase tracking-wide block mb-2">Valores Predefinidos</label>
+                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                                {[50, 100, 500, 1000].map((val) => (
+                                                    <button
+                                                        key={val}
+                                                        onClick={() => setAddCreditAmount(val.toString())}
+                                                        className={`px-4 py-2.5 rounded-xl text-sm font-medium transition font-mono border ${
+                                                            addCreditAmount === val.toString() 
+                                                                ? 'bg-white text-stone-900 border-white' 
+                                                                : 'bg-white/5 text-stone-400 border-white/5 hover:bg-white/10 hover:text-white hover:border-white/10'
+                                                        }`}
+                                                    >
+                                                        R$ {val}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
                                         <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center">
                                             <div className="w-full sm:max-w-xs">
-                                                <label className="text-xs text-stone-400 uppercase tracking-wide block mb-1.5">Adicionar Crédito (R$)</label>
+                                                <label className="text-xs text-stone-400 uppercase tracking-wide block mb-1.5">Outro Valor (R$)</label>
                                                 <input 
                                                     type="number" 
                                                     value={addCreditAmount} 
@@ -611,7 +630,7 @@ export default function ConfigPage() {
                                 <div>
                                     <h3 className="text-base font-medium text-stone-900 mb-4 flex items-center gap-2">
                                         <Icon icon="solar:history-linear" />
-                                        Histórico de Transações
+                                        Histórico de Faturas
                                     </h3>
                                     <div className="border border-stone-100 rounded-2xl overflow-hidden">
                                         {transactions.length > 0 ? (

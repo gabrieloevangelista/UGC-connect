@@ -50,6 +50,13 @@ export default function Navbar() {
                         {link.label}
                     </a>
                 ))}
+                <a
+                    href="/login"
+                    className="bg-white text-stone-950 px-8 py-3 rounded-full text-sm font-medium hover:bg-stone-200 transition mt-4"
+                    onClick={toggleMenu}
+                >
+                    Acesso Empresas
+                </a>
             </div>
 
             {/* Navbar */}
