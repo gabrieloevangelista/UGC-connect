@@ -15,6 +15,15 @@ interface FormatItem {
 const formats: FormatItem[] = [
     {
         number: "01",
+        title: "Vídeos para TikTok Shop",
+        shortTitle: "TikTok Shop",
+        image:
+            "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=2874&auto=format&fit=crop",
+        desc: "Conteúdo otimizado para vendas diretas. Mostre o produto em ação com foco total em conversão no marketplace do TikTok.",
+        tag: "E-commerce",
+    },
+    {
+        number: "02",
         title: "Vídeos para Ads (Paid Social)",
         shortTitle: "Vídeos para Ads",
         image:
@@ -23,7 +32,7 @@ const formats: FormatItem[] = [
         tag: "Formato Vencedor",
     },
     {
-        number: "02",
+        number: "03",
         title: "Unboxing & Reviews",
         shortTitle: "Unboxing & Reviews",
         image:
@@ -32,7 +41,7 @@ const formats: FormatItem[] = [
         tag: "Prova Social",
     },
     {
-        number: "03",
+        number: "04",
         title: "Testemunhais (Testimonials)",
         shortTitle: "Testemunhais Autênticos",
         image:
@@ -41,22 +50,13 @@ const formats: FormatItem[] = [
         tag: "Confiança",
     },
     {
-        number: "04",
+        number: "05",
         title: "Fotos Lifestyle & Static Ads",
         shortTitle: "Fotos Lifestyle Estáticas",
         image:
             "https://images.unsplash.com/photo-1501127122-f385ca6ddd9d?q=80&w=1935&auto=format&fit=crop",
         desc: "Imagens do produto no cotidiano. Perfeito para preencher o feed do Instagram, catálogos de e-commerce e criativos estáticos de alta performance.",
         tag: "Visual Content",
-    },
-    {
-        number: "05",
-        title: "Vídeos para TikTok Shop",
-        shortTitle: "TikTok Shop",
-        image:
-            "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=2874&auto=format&fit=crop",
-        desc: "Conteúdo otimizado para vendas diretas. Mostre o produto em ação com foco total em conversão no marketplace do TikTok.",
-        tag: "E-commerce",
     },
 ];
 

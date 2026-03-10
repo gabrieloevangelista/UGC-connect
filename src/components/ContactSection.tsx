@@ -8,6 +8,7 @@ export default function ContactSection() {
         name: "",
         email: "",
         company: "",
+        budget: "",
         message: ""
     });
     const [sending, setSending] = useState(false);
@@ -16,8 +17,13 @@ export default function ContactSection() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSending(true);
-        // Simulação de envio
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        const text = `*Novo contato pelo site*\n\n*Nome:* ${formData.name}\n*Empresa:* ${formData.company}\n*Email:* ${formData.email}\n*Orçamento Mensal:* ${formData.budget}\n\n*Mensagem:* ${formData.message}`;
+        
+        const whatsappUrl = `https://wa.me/5511932310504?text=${encodeURIComponent(text)}`;
+        
+        window.open(whatsappUrl, '_blank');
+        
         setSending(false);
         setSent(true);
     };
@@ -57,12 +63,12 @@ export default function ContactSection() {
                             <div>
                                 <h4 className="text-stone-900 font-medium mb-1">WhatsApp</h4>
                                 <a 
-                                    href="https://wa.me/5511999990000" 
+                                    href="https://wa.me/5511932310504" 
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                     className="text-stone-500 hover:text-stone-900 transition"
                                 >
-                                    (11) 99999-0000
+                                    (11) 93231-0504
                                 </a>
                             </div>
                         </div>
@@ -119,10 +125,23 @@ export default function ContactSection() {
                                     <input 
                                         type="text" 
                                         id="company" 
+                                        required
                                         className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-stone-900/10 focus:border-stone-400 outline-none transition"
                                         placeholder="Nome da sua empresa"
                                         value={formData.company}
                                         onChange={(e) => setFormData({...formData, company: e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="budget" className="block text-sm font-medium text-stone-700 mb-2">Orçamento Mensal Disponível</label>
+                                    <input 
+                                        type="text" 
+                                        id="budget" 
+                                        required
+                                        className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:ring-2 focus:ring-stone-900/10 focus:border-stone-400 outline-none transition"
+                                        placeholder="Ex: R$ 5.000,00"
+                                        value={formData.budget}
+                                        onChange={(e) => setFormData({...formData, budget: e.target.value})}
                                     />
                                 </div>
                                 <div>

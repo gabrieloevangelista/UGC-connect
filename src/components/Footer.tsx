@@ -36,7 +36,7 @@ export default function Footer() {
                                 contato@ugcconnect.com.br
                             </div>
                             <div className="text-white normal-case text-sm font-light block mt-1">
-                                +55 (11) 99999-0000
+                                +55 (11) 93231-0504
                             </div>
                         </div>
                     </div>
@@ -90,11 +90,11 @@ export default function Footer() {
 
             <div className="max-w-[1600px] mx-auto mt-24 pt-8 border-t border-[#E0D8C8]/20 flex flex-col md:flex-row justify-between text-[10px] text-[#E0D8C8]/60 tracking-wider uppercase">
                 <div className="flex gap-6 mb-4 md:mb-0">
-                    <a href="#" className="hover:text-white transition">
+                    <a href="/termos-de-servico" className="hover:text-white transition">
                         Termos de Serviço
                     </a>
-                    <a href="#" className="hover:text-white transition">
-                        Política de Uso
+                    <a href="/politica-de-privacidade" className="hover:text-white transition">
+                        Política de Privacidade
                     </a>
                 </div>
                 <div className="flex gap-6">

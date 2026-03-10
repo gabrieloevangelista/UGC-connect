@@ -96,14 +96,6 @@ export default function ValueProposition() {
                             para uso em campanhas.
                         </p>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl border border-stone-100 shadow-sm flex-1 flex flex-col justify-end relative overflow-hidden group">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src="https://images.unsplash.com/photo-1622353340801-9c17fbb8f8ce?q=80&w=2070&auto=format&fit=crop"
-                            className="absolute inset-0 w-full h-full object-cover opacity-90 transition duration-700 group-hover:scale-105 filter sepia-[0.2]"
-                            alt="Equipamento de gravação"
-                        />
-                    </div>
                     <div className="flex items-center justify-between">
                         <p className="text-stone-500 text-sm max-w-[200px]">
                             Base Curada de Criadores
