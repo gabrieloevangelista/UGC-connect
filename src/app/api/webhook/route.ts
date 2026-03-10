@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateSubscriberStatus, updateTransactionStatus } from "@/lib/supabase";
+import { updateSubscriberStatusAdmin, updateTransactionStatusAdmin } from "@/lib/supabase-admin";
 
 export async function POST(request: NextRequest) {
     try {
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
                 // Try to update subscription
                 try {
-                    await updateSubscriberStatus(billingId, "PAID");
+                    await updateSubscriberStatusAdmin(billingId, "PAID");
                     console.log(`✅ Assinatura confirmada para billing: ${billingId}`);
                     handled = true;
                 } catch (e) {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
                 if (!handled) {
                     // Try to update transaction (credits)
                     try {
-                        await updateTransactionStatus(billingId, "COMPLETED");
+                        await updateTransactionStatusAdmin(billingId, "COMPLETED");
                         console.log(`✅ Créditos confirmados para billing: ${billingId}`);
                         handled = true;
                     } catch (e) {

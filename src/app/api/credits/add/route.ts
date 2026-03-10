@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createCustomer, createBilling } from "@/lib/abacatepay";
-import { createTransaction } from "@/lib/supabase";
+import { getAdminClient } from "@/lib/supabase-admin";
 
 export async function POST(request: NextRequest) {
     try {
@@ -59,15 +59,24 @@ export async function POST(request: NextRequest) {
         const billingId = billingResponse.data.id;
         const checkoutUrl = billingResponse.data.url;
 
-        // 3. Save Transaction in Supabase
-        await createTransaction({
-            user_id: userId,
-            amount: numericAmount,
-            type: "CREDIT",
-            description: "Adição de créditos via Pix",
-            status: "PENDING",
-            abacatepay_billing_id: billingId,
-        });
+        // 3. Save Transaction in Supabase (Using Admin Client to bypass RLS)
+        const supabaseAdmin = getAdminClient();
+        const { error: txError } = await supabaseAdmin
+            .from("transactions")
+            .insert([{
+                user_id: userId,
+                amount: numericAmount,
+                type: "CREDIT",
+                description: "Adição de créditos via Pix",
+                status: "PENDING",
+                abacatepay_billing_id: billingId,
+            }])
+            .select()
+            .single();
+
+        if (txError) {
+            throw new Error(`Erro ao criar transação: ${txError.message}`);
+        }
 
         return NextResponse.json({ checkoutUrl });
     } catch (error: any) {
