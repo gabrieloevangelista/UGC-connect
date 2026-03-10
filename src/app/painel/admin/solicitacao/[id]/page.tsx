@@ -468,14 +468,7 @@ export default function SolicitacaoDetalhesPage() {
                         </div>
                     </div>
                 </div>
-            </div>                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Telefone</span>
-                                <p className="font-medium text-stone-900">{subscriber.phone || "—"}</p>
-                            </div>
-                        </div>
-                    ) : (
-                        <p className="text-stone-500">Dados do usuário não encontrados.</p>
-                    )}
-                </div>
+            </div>
 
                 {/* Sidebar Info */}
                 <div className="space-y-6">
@@ -549,7 +542,6 @@ export default function SolicitacaoDetalhesPage() {
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     );
 }
