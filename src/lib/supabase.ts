@@ -63,26 +63,34 @@ export async function updateTransactionStatus(
             amount_param: transaction.amount
         });
 
-        // Fallback if RPC doesn't exist (though RPC is safer for concurrency)
-        // Since we can't easily create RPC without SQL access, we'll do a read-modify-write here for now, 
-        // but ideally we should use RPC.
-        // Let's assume we can't use RPC and do it manually.
+        // Fallback if RPC doesn't exist or fails
         if (creditError) { 
              console.warn("RPC add_credits failed, trying manual update", creditError);
              
-             const { data: subscriber } = await supabase
+             const { data: subscriber, error: subError } = await supabase
                 .from("subscribers")
                 .select("credits")
                 .eq("user_id", transaction.user_id)
                 .single();
              
-             const currentCredits = subscriber?.credits || 0;
-             const newCredits = currentCredits + transaction.amount;
-             
-             await supabase
-                .from("subscribers")
-                .update({ credits: newCredits })
-                .eq("user_id", transaction.user_id);
+             if (subError || !subscriber) {
+                 console.error("Erro ao buscar assinante para adicionar créditos (Manual Fallback):", subError);
+                 // We don't throw here to avoid rolling back the transaction status update?
+                 // Actually we can't rollback the transaction update easily since it's already done.
+                 // So we just log error.
+             } else {
+                 const currentCredits = Number(subscriber.credits) || 0;
+                 const newCredits = currentCredits + Number(transaction.amount);
+                 
+                 const { error: updateError } = await supabase
+                    .from("subscribers")
+                    .update({ credits: newCredits })
+                    .eq("user_id", transaction.user_id);
+                
+                 if (updateError) {
+                     console.error("Erro ao atualizar créditos manualmente:", updateError);
+                 }
+             }
         }
     }
 
