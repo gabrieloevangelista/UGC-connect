@@ -132,6 +132,23 @@ export default function SolicitacaoDetalhesPage() {
         }));
     };
 
+    const updateStatus = async (newStatus: string) => {
+        try {
+            const { error } = await supabase
+                .from("video_requests")
+                .update({ status: newStatus })
+                .eq("id", params.id);
+
+            if (error) throw error;
+
+            setRequest({ ...request, status: newStatus });
+            showToast(`Status atualizado para ${statusConfig[newStatus]?.label || newStatus}`, "success");
+        } catch (error) {
+            console.error("Erro ao atualizar status:", error);
+            showToast("Erro ao atualizar status", "error");
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">

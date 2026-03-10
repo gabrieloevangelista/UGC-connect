@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { supabase } from "@/lib/supabase";
 import type { Subscriber } from "@/lib/supabase";
+import { isUserAdmin } from "@/config/admin";
 
 export default function PainelPage() {
     const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
@@ -32,10 +33,17 @@ export default function PainelPage() {
                 if (sub) setSubscriber(sub);
 
                 // Contar solicitações de vídeo
-                const { count } = await supabase
+                const isAdmin = isUserAdmin(user.email);
+                
+                let query = supabase
                     .from("video_requests")
-                    .select("*", { count: "exact", head: true })
-                    .eq("user_id", user.id);
+                    .select("*", { count: "exact", head: true });
+                
+                if (!isAdmin) {
+                    query = query.eq("user_id", user.id);
+                }
+                
+                const { count } = await query;
 
                 setVideoCount(count || 0);
             }

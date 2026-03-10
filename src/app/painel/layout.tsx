@@ -6,12 +6,7 @@ import { Icon } from "@iconify/react";
 import { supabase } from "@/lib/supabase";
 import { signOut } from "@/lib/auth";
 import type { User } from "@supabase/supabase-js";
-
-const ADMIN_EMAILS = [
-    "contato@ugcconnect.shop",
-    "admin@ugcconnect.shop",
-    "gabriel.evan.queiroz@gmail.com"
-];
+import { isUserAdmin, checkAdminStatus } from "@/config/admin";
 
 const navItems = [
     {
@@ -88,11 +83,11 @@ export default function PainelLayout({
             }
 
             setUser(session.user);
-            const admin = ADMIN_EMAILS.includes(session.user.email || "");
+            const { isAdmin: admin } = await checkAdminStatus(session.user.email);
             setIsAdmin(admin);
 
             // Redirecionar se tentar acessar admin sem permissão
-            if (pathname === "/painel/admin" && !admin) {
+            if (pathname.startsWith("/painel/admin") && !admin) {
                 router.push("/painel");
             }
 

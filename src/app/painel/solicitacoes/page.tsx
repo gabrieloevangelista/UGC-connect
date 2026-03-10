@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/Toast";
 import { useConfirm } from "@/components/ConfirmDialog";
+import { isUserAdmin } from "@/config/admin";
 
 interface VideoRequest {
     id: string;
@@ -64,11 +65,19 @@ export default function SolicitacoesPage() {
             } = await supabase.auth.getUser();
 
             if (user) {
-                const { data } = await supabase
+                const isAdmin = isUserAdmin(user.email);
+                
+                let query = supabase
                     .from("video_requests")
                     .select("*")
-                    .eq("user_id", user.id)
                     .order("created_at", { ascending: false });
+
+                // Se não for admin, filtra apenas as solicitações do próprio usuário
+                if (!isAdmin) {
+                    query = query.eq("user_id", user.id);
+                }
+
+                const { data } = await query;
 
                 if (data) setRequests(data);
             }
