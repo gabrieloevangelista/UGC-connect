@@ -157,7 +157,7 @@ export default function SolicitacoesPage() {
                         Nenhuma solicitação ainda
                     </h3>
                     <p className="text-sm text-stone-500 mb-6">
-                        Clique em "Nova Solicitação" para enviar seu primeiro briefing.
+                        Clique em &quot;Nova Solicitação&quot; para enviar seu primeiro briefing.
                     </p>
                     <a
                         href="/painel/solicitar"

@@ -74,7 +74,8 @@ export default function AdminPage() {
                 .from("subscribers")
                 .select("user_id, email, name");
 
-            const requestsWithDetails = data.map((req: any) => {
+            const requestsData = (data || []) as EnhancedVideoRequest[];
+            const requestsWithDetails = requestsData.map((req) => {
                 const sub = subscribers?.find(s => s.user_id === req.user_id);
                 return {
                     ...req,

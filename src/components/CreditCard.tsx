@@ -27,7 +27,7 @@ const getBrandIcon = (brand: string) => {
 
 const formatCardNumber = (num: string) => {
     // Pad with placeholders up to 16
-    let formatted = num.replace(/\D/g, '').padEnd(16, '•');
+    const formatted = num.replace(/\D/g, '').padEnd(16, '•');
     // Group by 4
     return formatted.match(/.{1,4}/g)?.join(' ') || '';
 };

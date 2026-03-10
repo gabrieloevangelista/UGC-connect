@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Icon } from "@iconify/react";
-import { supabase } from "@/lib/supabase";
+import { supabase, type Transaction } from "@/lib/supabase";
 import CreditCard from "@/components/CreditCard";
 import { useToast } from "@/components/Toast";
 import { Plan, plans } from "@/lib/constants";
@@ -67,7 +67,7 @@ export default function ConfigPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Wallet State
-    const [transactions, setTransactions] = useState<any[]>([]);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [addCreditAmount, setAddCreditAmount] = useState("");
     const [processingCredit, setProcessingCredit] = useState(false);
 
@@ -643,7 +643,13 @@ export default function ConfigPage() {
                                                             </div>
                                                             <div>
                                                                 <p className="text-sm font-medium text-stone-900">{tx.description || (tx.type === 'CREDIT' ? 'Crédito Adicionado' : 'Uso de Saldo')}</p>
-                                                                <p className="text-xs text-stone-500">{new Date(tx.created_at).toLocaleDateString('pt-BR')} às {new Date(tx.created_at).toLocaleTimeString('pt-BR')}</p>
+                                                                <p className="text-xs text-stone-500">
+                                                                    {tx.created_at ? (
+                                                                        <>
+                                                                            {new Date(tx.created_at).toLocaleDateString('pt-BR')} às {new Date(tx.created_at).toLocaleTimeString('pt-BR')}
+                                                                        </>
+                                                                    ) : null}
+                                                                </p>
                                                             </div>
                                                         </div>
                                                         <div className="text-right">

@@ -16,7 +16,7 @@ export default function TermsOfService() {
                     
                     <h2 className="text-2xl text-stone-800 mt-8 mb-4">1. Aceitação dos Termos</h2>
                     <p>
-                        Ao acessar e usar a plataforma UGC Connect ("nós", "nosso" ou "plataforma"), você concorda em cumprir e ficar vinculado a estes Termos de Serviço ("Termos"). Se você não concordar com qualquer parte destes Termos, não poderá acessar ou usar nossos serviços.
+                        Ao acessar e usar a plataforma UGC Connect (&quot;nós&quot;, &quot;nosso&quot; ou &quot;plataforma&quot;), você concorda em cumprir e ficar vinculado a estes Termos de Serviço (&quot;Termos&quot;). Se você não concordar com qualquer parte destes Termos, não poderá acessar ou usar nossos serviços.
                     </p>
 
                     <h2 className="text-2xl text-stone-800 mt-8 mb-4">2. Descrição dos Serviços</h2>

@@ -40,8 +40,32 @@ export default function SolicitacaoDetalhesPage() {
     const { confirm } = useConfirm();
 
     const [loading, setLoading] = useState(true);
-    const [request, setRequest] = useState<any>(null);
-    const [subscriber, setSubscriber] = useState<any>(null);
+    const [request, setRequest] = useState<{
+        id: string;
+        user_id: string;
+        format_type: string;
+        product_name: string;
+        description: string;
+        reference_urls?: string | null;
+        video_quantity?: number | null;
+        budget?: number | null;
+        deadline: string;
+        status: string;
+        created_at: string;
+    } | null>(null);
+    const [subscriber, setSubscriber] = useState<{
+        id?: string;
+        user_id?: string;
+        name?: string | null;
+        email?: string | null;
+        phone?: string | null;
+        tax_id?: string | null;
+        company?: string | null;
+        credits?: number | null;
+        plan?: string | null;
+        status?: string | null;
+        created_at?: string;
+    } | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         product_name: "",
@@ -99,6 +123,7 @@ export default function SolicitacaoDetalhesPage() {
     };
 
     const handleSave = async () => {
+        if (!request) return;
         try {
             const { error } = await supabase
                 .from("video_requests")
@@ -141,7 +166,7 @@ export default function SolicitacaoDetalhesPage() {
 
             if (error) throw error;
 
-            setRequest({ ...request, status: newStatus });
+            setRequest((prev) => (prev ? { ...prev, status: newStatus } : prev));
             showToast(`Status atualizado para ${statusConfig[newStatus]?.label || newStatus}`, "success");
         } catch (error) {
             console.error("Erro ao atualizar status:", error);

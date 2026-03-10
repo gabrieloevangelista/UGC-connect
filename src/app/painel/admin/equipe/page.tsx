@@ -76,9 +76,10 @@ export default function TeamManagementPage() {
             setAdmins([data, ...admins]);
             setNewAdminEmail("");
             showToast("Administrador adicionado com sucesso", "success");
-        } catch (error: any) {
+        } catch (error) {
             console.error("Erro ao adicionar admin:", error);
-            if (error.code === '42501') {
+            const err = error as { code?: string };
+            if (err.code === '42501') {
                 showToast("Apenas Master Admins podem adicionar novos administradores", "error");
             } else {
                 showToast("Erro ao adicionar administrador", "error");
@@ -109,9 +110,10 @@ export default function TeamManagementPage() {
 
             setAdmins(admins.filter(a => a.id !== id));
             showToast("Administrador removido com sucesso", "success");
-        } catch (error: any) {
+        } catch (error) {
             console.error("Erro ao remover admin:", error);
-            if (error.code === '42501') {
+            const err = error as { code?: string };
+            if (err.code === '42501') {
                 showToast("Apenas Master Admins podem remover administradores", "error");
             } else {
                 showToast("Erro ao remover administrador", "error");

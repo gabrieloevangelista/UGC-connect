@@ -41,7 +41,10 @@ export async function POST(request: NextRequest) {
         const customerId = customerResponse.data.id;
 
         // 2. Create Billing in AbacatePay
-        const origin = request.headers.get("origin") || "http://localhost:3000";
+        const origin =
+            request.headers.get("origin") ||
+            process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
         const billingResponse = await createBilling({
             customerId,
             productName: "Créditos UGC",
@@ -79,11 +82,9 @@ export async function POST(request: NextRequest) {
         }
 
         return NextResponse.json({ checkoutUrl });
-    } catch (error: any) {
+    } catch (error) {
         console.error("ERRO AO ADICIONAR CRÉDITOS:", error);
-        return NextResponse.json(
-            { error: error instanceof Error ? error.message : "Erro interno no servidor" },
-            { status: 500 }
-        );
+        const message = error instanceof Error ? error.message : "Erro interno no servidor";
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }

@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
                     
                     <h2 className="text-2xl text-stone-800 mt-8 mb-4">1. Introdução</h2>
                     <p>
-                        A UGC Connect ("nós", "nosso" ou "plataforma") está comprometida em proteger a sua privacidade. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você visita nosso site ou utiliza nossos serviços.
+                        A UGC Connect (&quot;nós&quot;, &quot;nosso&quot; ou &quot;plataforma&quot;) está comprometida em proteger a sua privacidade. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você visita nosso site ou utiliza nossos serviços.
                     </p>
 
                     <h2 className="text-2xl text-stone-800 mt-8 mb-4">2. Coleta de Informações</h2>

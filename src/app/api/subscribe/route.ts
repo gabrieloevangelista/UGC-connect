@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        let planData = { ...selectedSettings };
+        const planData = { ...selectedSettings };
 
         // Aplicar desconto trimestral se aplicável
         if (billingPeriod === 'trimestral') {
@@ -79,7 +79,10 @@ export async function POST(request: NextRequest) {
         console.log("Cliente criado:", customerId);
 
         // 2. Criar cobrança no AbacatePay
-        const origin = request.headers.get("origin") || "http://localhost:3000";
+        const origin =
+            request.headers.get("origin") ||
+            process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
         console.log("Criando cobrança no AbacatePay...", { customerId, productName: planData.name });
 
         const billingResponse = await createBilling({
@@ -116,15 +119,12 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json({ checkoutUrl });
-    } catch (error: any) {
+    } catch (error) {
         console.error("DETALHE DO ERRO NA ASSINATURA:", error);
+        const message = error instanceof Error ? error.message : "Erro interno no servidor";
 
-        // Se for erro de validação do AbacatePay (contendo "Erro ao criar"), retornar 400
-        const isClientError = error.message?.includes("Erro ao criar") || error.message?.includes("Inválido");
+        const isClientError = message.includes("Erro ao criar") || message.includes("Inválido");
 
-        return NextResponse.json(
-            { error: error instanceof Error ? error.message : "Erro interno no servidor" },
-            { status: isClientError ? 400 : 500 }
-        );
+        return NextResponse.json({ error: message }, { status: isClientError ? 400 : 500 });
     }
 }
