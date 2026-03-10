@@ -48,6 +48,7 @@ export default function PainelLayout({
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -224,10 +225,42 @@ export default function PainelLayout({
                     >
                         <Icon icon="solar:hamburger-menu-linear" width={24} />
                     </button>
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white text-xs font-medium">
+                    <div className="flex items-center gap-3 relative">
+                        <div 
+                            className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white text-xs font-medium cursor-pointer hover:opacity-80 transition"
+                            onClick={() => setMenuOpen(!menuOpen)}
+                        >
                             {user?.email?.[0]?.toUpperCase() || "U"}
                         </div>
+
+                        {menuOpen && (
+                            <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-stone-100 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                                <div className="px-4 py-2 border-b border-stone-100 mb-1">
+                                    <p className="text-xs text-stone-500 font-medium">Conta</p>
+                                    <p className="text-sm text-stone-900 truncate">{user?.email}</p>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        router.push("/painel/dados");
+                                        setMenuOpen(false);
+                                    }}
+                                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 transition"
+                                >
+                                    <Icon icon="solar:user-circle-linear" width={18} />
+                                    Minha Conta
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        handleSignOut();
+                                        setMenuOpen(false);
+                                    }}
+                                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
+                                >
+                                    <Icon icon="solar:logout-2-linear" width={18} />
+                                    Sair
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </header>
 

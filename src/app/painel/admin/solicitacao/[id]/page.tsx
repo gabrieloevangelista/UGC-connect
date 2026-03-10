@@ -293,7 +293,7 @@ export default function SolicitacaoDetalhesPage() {
                     </h2>
                     {subscriber ? (
                         <div className="flex flex-col gap-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-4">
                                 <div className="p-3 rounded-xl bg-stone-50 border border-stone-100">
                                     <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Nome</span>
                                     <p className="font-medium text-stone-900">{subscriber.name}</p>
@@ -303,7 +303,7 @@ export default function SolicitacaoDetalhesPage() {
                                     <p className="font-medium text-stone-900 break-all">{subscriber.email}</p>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-4">
                                 <div className="p-3 rounded-xl bg-stone-50 border border-stone-100">
                                     <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Empresa</span>
                                     <p className="font-medium text-stone-900">{subscriber.company || "—"}</p>
@@ -327,7 +327,7 @@ export default function SolicitacaoDetalhesPage() {
                     </h3>
                     
                     <div className="flex flex-col gap-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-medium text-stone-500 uppercase">
                                     Produto / Marca
@@ -358,7 +358,7 @@ export default function SolicitacaoDetalhesPage() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="flex flex-col gap-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-medium text-stone-500 uppercase">
                                     Quantidade
