@@ -359,7 +359,77 @@ export default function SolicitacaoDetalhesPage() {
                                 )
                             )}
                         </div>
+
+                        {/* Status Actions */}
+                        <div className="flex flex-col gap-2">
+                            <span className="text-sm font-medium text-stone-700">Ações de Status:</span>
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    onClick={() => updateStatus('PENDING')}
+                                    disabled={request.status === 'PENDING'}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
+                                        request.status === 'PENDING' 
+                                            ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed'
+                                            : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
+                                    }`}
+                                >
+                                    Pendente
+                                </button>
+                                <button
+                                    onClick={() => updateStatus('IN_PROGRESS')}
+                                    disabled={request.status === 'IN_PROGRESS'}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
+                                        request.status === 'IN_PROGRESS'
+                                            ? 'bg-blue-100 text-blue-400 border-blue-200 cursor-not-allowed'
+                                            : 'bg-white text-blue-600 border-blue-200 hover:bg-blue-50'
+                                    }`}
+                                >
+                                    Em Produção
+                                </button>
+                                <button
+                                    onClick={() => updateStatus('DELIVERED')}
+                                    disabled={request.status === 'DELIVERED'}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
+                                        request.status === 'DELIVERED'
+                                            ? 'bg-emerald-100 text-emerald-400 border-emerald-200 cursor-not-allowed'
+                                            : 'bg-white text-emerald-600 border-emerald-200 hover:bg-emerald-50'
+                                    }`}
+                                >
+                                    Entregar
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                {/* User Info Card */}
+                <div className="bg-white rounded-2xl border border-stone-100 p-6 mb-8">
+                    <h2 className="text-lg font-medium text-stone-900 mb-4 flex items-center gap-2">
+                        <Icon icon="solar:user-circle-linear" />
+                        Dados do Solicitante
+                    </h2>
+                    {subscriber ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div>
+                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Nome</span>
+                                <p className="font-medium text-stone-900">{subscriber.name}</p>
+                            </div>
+                            <div>
+                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Email</span>
+                                <p className="font-medium text-stone-900">{subscriber.email}</p>
+                            </div>
+                            <div>
+                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Empresa</span>
+                                <p className="font-medium text-stone-900">{subscriber.company || "—"}</p>
+                            </div>
+                            <div>
+                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Telefone</span>
+                                <p className="font-medium text-stone-900">{subscriber.phone || "—"}</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-stone-500">Dados do usuário não encontrados.</p>
+                    )}
                 </div>
 
                 {/* Sidebar Info */}
