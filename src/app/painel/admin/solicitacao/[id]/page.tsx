@@ -206,53 +206,130 @@ export default function SolicitacaoDetalhesPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Main Content */}
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Status Card */}
-                    <div className="bg-white rounded-2xl border border-stone-100 p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-medium text-stone-900">Status do Pedido</h3>
-                            {!isEditing && (
-                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${status.color}`}>
-                                    <Icon icon={status.icon} width={12} />
-                                    {status.label}
-                                </span>
-                            )}
-                        </div>
-                        {isEditing ? (
-                            <select
-                                name="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-stone-900/20"
-                            >
-                                <option value="PENDING">Pendente</option>
-                                <option value="IN_PROGRESS">Em Produção</option>
-                                <option value="DELIVERED">Entregue</option>
-                            </select>
-                        ) : (
-                            <div className="w-full bg-stone-100 rounded-full h-2 mt-2">
-                                <div
-                                    className={`h-full rounded-full transition-all duration-500 ${
-                                        request.status === "DELIVERED" ? "w-full bg-emerald-500" :
-                                        request.status === "IN_PROGRESS" ? "w-1/2 bg-blue-500" :
-                                        "w-5 bg-yellow-500"
-                                    }`}
-                                />
-                            </div>
+            <div className="flex flex-col gap-6">
+                {/* Status Card */}
+                <div className="bg-white rounded-2xl border border-stone-100 p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-medium text-stone-900">Status do Pedido</h3>
+                        {!isEditing && (
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${status.color}`}>
+                                <Icon icon={status.icon} width={12} />
+                                {status.label}
+                            </span>
                         )}
                     </div>
+                    {isEditing ? (
+                        <select
+                            name="status"
+                            value={formData.status}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-stone-900/20"
+                        >
+                            <option value="PENDING">Pendente</option>
+                            <option value="IN_PROGRESS">Em Produção</option>
+                            <option value="DELIVERED">Entregue</option>
+                        </select>
+                    ) : (
+                        <div className="w-full bg-stone-100 rounded-full h-2 mt-2">
+                            <div
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                    request.status === "DELIVERED" ? "w-full bg-emerald-500" :
+                                    request.status === "IN_PROGRESS" ? "w-1/2 bg-blue-500" :
+                                    "w-5 bg-yellow-500"
+                                }`}
+                            />
+                        </div>
+                    )}
+                    
+                    {/* Status Actions - Moved inside Status Card for better context */}
+                    <div className="mt-6 pt-4 border-t border-stone-100">
+                        <span className="text-xs font-medium text-stone-500 uppercase block mb-3">Alterar Status</span>
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                onClick={() => updateStatus('PENDING')}
+                                disabled={request.status === 'PENDING'}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${
+                                    request.status === 'PENDING' 
+                                        ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed'
+                                        : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
+                                }`}
+                            >
+                                <Icon icon="solar:clock-circle-linear" />
+                                Pendente
+                            </button>
+                            <button
+                                onClick={() => updateStatus('IN_PROGRESS')}
+                                disabled={request.status === 'IN_PROGRESS'}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${
+                                    request.status === 'IN_PROGRESS'
+                                        ? 'bg-blue-100 text-blue-400 border-blue-200 cursor-not-allowed'
+                                        : 'bg-white text-blue-600 border-blue-200 hover:bg-blue-50'
+                                }`}
+                            >
+                                <Icon icon="solar:play-circle-linear" />
+                                Em Produção
+                            </button>
+                            <button
+                                onClick={() => updateStatus('DELIVERED')}
+                                disabled={request.status === 'DELIVERED'}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${
+                                    request.status === 'DELIVERED'
+                                        ? 'bg-emerald-100 text-emerald-400 border-emerald-200 cursor-not-allowed'
+                                        : 'bg-white text-emerald-600 border-emerald-200 hover:bg-emerald-50'
+                                }`}
+                            >
+                                <Icon icon="solar:check-circle-linear" />
+                                Entregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                    {/* Project Details */}
-                    <div className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
-                        <h3 className="font-medium text-stone-900 border-b border-stone-100 pb-2">
-                            Dados do Projeto
-                        </h3>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
+                {/* User Info Card */}
+                <div className="bg-white rounded-2xl border border-stone-100 p-6">
+                    <h2 className="text-lg font-medium text-stone-900 mb-6 flex items-center gap-2">
+                        <Icon icon="solar:user-circle-linear" />
+                        Dados do Solicitante
+                    </h2>
+                    {subscriber ? (
+                        <div className="flex flex-col gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="p-3 rounded-xl bg-stone-50 border border-stone-100">
+                                    <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Nome</span>
+                                    <p className="font-medium text-stone-900">{subscriber.name}</p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-stone-50 border border-stone-100">
+                                    <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Email</span>
+                                    <p className="font-medium text-stone-900 break-all">{subscriber.email}</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="p-3 rounded-xl bg-stone-50 border border-stone-100">
+                                    <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Empresa</span>
+                                    <p className="font-medium text-stone-900">{subscriber.company || "—"}</p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-stone-50 border border-stone-100">
+                                    <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Telefone</span>
+                                    <p className="font-medium text-stone-900">{subscriber.phone || "—"}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-stone-500">Dados do usuário não encontrados.</p>
+                    )}
+                </div>
+
+                {/* Project Details */}
+                <div className="bg-white rounded-2xl border border-stone-100 p-6 space-y-6">
+                    <h3 className="font-medium text-stone-900 border-b border-stone-100 pb-4 flex items-center gap-2">
+                        <Icon icon="solar:document-text-linear" />
+                        Dados do Projeto
+                    </h3>
+                    
+                    <div className="flex flex-col gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-stone-500 uppercase">
                                     Produto / Marca
                                 </label>
                                 {isEditing ? (
@@ -261,23 +338,29 @@ export default function SolicitacaoDetalhesPage() {
                                         name="product_name"
                                         value={formData.product_name}
                                         onChange={handleChange}
-                                        className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm"
+                                        className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:ring-2 focus:ring-stone-900/10 focus:border-stone-400 outline-none transition"
                                     />
                                 ) : (
-                                    <p className="text-stone-900">{request.product_name}</p>
+                                    <p className="text-stone-900 text-lg font-medium">{request.product_name}</p>
                                 )}
                             </div>
-                            <div>
-                                <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-stone-500 uppercase">
                                     Formato
                                 </label>
-                                <p className="text-stone-900 flex items-center gap-2">
-                                    <Icon icon="solar:videocamera-record-linear" className="text-stone-400" />
+                                <div className="flex items-center gap-2 text-stone-900">
+                                    <span className="p-1.5 rounded-lg bg-stone-100">
+                                        <Icon icon="solar:videocamera-record-linear" className="text-stone-500" width={18} />
+                                    </span>
                                     {formatLabels[request.format_type] || request.format_type}
-                                </p>
+                                </div>
                             </div>
-                            <div>
-                                <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-stone-500 uppercase">
                                     Quantidade
                                 </label>
                                 {isEditing ? (
@@ -286,14 +369,15 @@ export default function SolicitacaoDetalhesPage() {
                                         name="video_quantity"
                                         value={formData.video_quantity}
                                         onChange={handleChange}
-                                        className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm"
+                                        className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:ring-2 focus:ring-stone-900/10 focus:border-stone-400 outline-none transition"
                                     />
                                 ) : (
-                                    <p className="text-stone-900">{request.video_quantity || 1} vídeo(s)</p>
+                                    <p className="text-stone-900 font-medium">{request.video_quantity || 1} vídeo(s)</p>
                                 )}
                             </div>
-                            <div>
-                                <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-stone-500 uppercase">
                                     Orçamento Disponível
                                 </label>
                                 {isEditing ? (
@@ -302,128 +386,89 @@ export default function SolicitacaoDetalhesPage() {
                                         name="budget"
                                         value={formData.budget}
                                         onChange={handleChange}
-                                        step="0.01"
-                                        className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm"
+                                        className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:ring-2 focus:ring-stone-900/10 focus:border-stone-400 outline-none transition"
                                     />
                                 ) : (
-                                    <p className="text-stone-900 font-medium text-lg">
-                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(request.budget || 0)}
+                                    <p className="text-stone-900 font-medium">R$ {request.budget?.toFixed(2) || "0.00"}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-stone-500 uppercase">
+                                    Prazo Desejado
+                                </label>
+                                {isEditing ? (
+                                    <input
+                                        type="date"
+                                        name="deadline"
+                                        value={formData.deadline}
+                                        onChange={handleChange}
+                                        className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:ring-2 focus:ring-stone-900/10 focus:border-stone-400 outline-none transition"
+                                    />
+                                ) : (
+                                    <p className="text-stone-900 font-medium">
+                                        {new Date(request.deadline).toLocaleDateString()}
                                     </p>
                                 )}
                             </div>
                         </div>
 
-                        <div>
-                            <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
-                                Briefing
+                        <div className="space-y-2">
+                            <label className="text-xs font-medium text-stone-500 uppercase flex items-center gap-2">
+                                <Icon icon="solar:link-linear" />
+                                Links de Referência
+                            </label>
+                            {isEditing ? (
+                                <textarea
+                                    name="reference_urls"
+                                    value={formData.reference_urls}
+                                    onChange={handleChange}
+                                    rows={3}
+                                    className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:ring-2 focus:ring-stone-900/10 focus:border-stone-400 outline-none transition"
+                                />
+                            ) : (
+                                <div className="bg-stone-50 rounded-xl p-4 border border-stone-100">
+                                    {request.reference_urls ? (
+                                        <a 
+                                            href={request.reference_urls} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="text-blue-600 hover:underline break-all flex items-center gap-2"
+                                        >
+                                            <Icon icon="solar:link-circle-linear" />
+                                            {request.reference_urls}
+                                        </a>
+                                    ) : (
+                                        <span className="text-stone-400 italic">Nenhum link fornecido</span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-medium text-stone-500 uppercase flex items-center gap-2">
+                                <Icon icon="solar:notes-linear" />
+                                Descrição / Briefing
                             </label>
                             {isEditing ? (
                                 <textarea
                                     name="description"
                                     value={formData.description}
                                     onChange={handleChange}
-                                    rows={5}
-                                    className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm resize-none"
+                                    rows={6}
+                                    className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm focus:ring-2 focus:ring-stone-900/10 focus:border-stone-400 outline-none transition"
                                 />
                             ) : (
-                                <p className="text-stone-600 text-sm whitespace-pre-wrap bg-stone-50 p-4 rounded-xl border border-stone-100">
-                                    {request.description}
-                                </p>
+                                <div className="bg-stone-50 rounded-xl p-6 border border-stone-100 min-h-[100px]">
+                                    <p className="text-stone-700 whitespace-pre-wrap leading-relaxed">
+                                        {request.description}
+                                    </p>
+                                </div>
                             )}
-                        </div>
-
-                        <div>
-                            <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
-                                Links de Referência
-                            </label>
-                            {isEditing ? (
-                                <input
-                                    type="text"
-                                    name="reference_urls"
-                                    value={formData.reference_urls}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm"
-                                />
-                            ) : (
-                                request.reference_urls ? (
-                                    <a 
-                                        href={request.reference_urls} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 hover:underline text-sm break-all"
-                                    >
-                                        {request.reference_urls}
-                                    </a>
-                                ) : (
-                                    <p className="text-stone-400 text-sm italic">Nenhum link fornecido</p>
-                                )
-                            )}
-                        </div>
-
-                        {/* Status Actions */}
-                        <div className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-stone-700">Ações de Status:</span>
-                            <div className="flex flex-wrap gap-2">
-                                <button
-                                    onClick={() => updateStatus('PENDING')}
-                                    disabled={request.status === 'PENDING'}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
-                                        request.status === 'PENDING' 
-                                            ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed'
-                                            : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
-                                    }`}
-                                >
-                                    Pendente
-                                </button>
-                                <button
-                                    onClick={() => updateStatus('IN_PROGRESS')}
-                                    disabled={request.status === 'IN_PROGRESS'}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
-                                        request.status === 'IN_PROGRESS'
-                                            ? 'bg-blue-100 text-blue-400 border-blue-200 cursor-not-allowed'
-                                            : 'bg-white text-blue-600 border-blue-200 hover:bg-blue-50'
-                                    }`}
-                                >
-                                    Em Produção
-                                </button>
-                                <button
-                                    onClick={() => updateStatus('DELIVERED')}
-                                    disabled={request.status === 'DELIVERED'}
-                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
-                                        request.status === 'DELIVERED'
-                                            ? 'bg-emerald-100 text-emerald-400 border-emerald-200 cursor-not-allowed'
-                                            : 'bg-white text-emerald-600 border-emerald-200 hover:bg-emerald-50'
-                                    }`}
-                                >
-                                    Entregar
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
-
-                {/* User Info Card */}
-                <div className="bg-white rounded-2xl border border-stone-100 p-6 mb-8">
-                    <h2 className="text-lg font-medium text-stone-900 mb-4 flex items-center gap-2">
-                        <Icon icon="solar:user-circle-linear" />
-                        Dados do Solicitante
-                    </h2>
-                    {subscriber ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div>
-                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Nome</span>
-                                <p className="font-medium text-stone-900">{subscriber.name}</p>
-                            </div>
-                            <div>
-                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Email</span>
-                                <p className="font-medium text-stone-900">{subscriber.email}</p>
-                            </div>
-                            <div>
-                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Empresa</span>
-                                <p className="font-medium text-stone-900">{subscriber.company || "—"}</p>
-                            </div>
-                            <div>
-                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Telefone</span>
+            </div>                                <span className="text-xs text-stone-400 uppercase tracking-wider block mb-1">Telefone</span>
                                 <p className="font-medium text-stone-900">{subscriber.phone || "—"}</p>
                             </div>
                         </div>
