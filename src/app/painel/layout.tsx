@@ -45,6 +45,7 @@ export default function PainelLayout({
     const router = useRouter();
     const pathname = usePathname();
     const [user, setUser] = useState<User | null>(null);
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -64,11 +65,12 @@ export default function PainelLayout({
             // Check if subscriber exists, create if not (for Google Auth)
             const { data: sub } = await supabase
                 .from("subscribers")
-                .select("id")
+                .select("id, avatar_url")
                 .eq("user_id", session.user.id)
                 .single();
 
             if (!sub) {
+                const googleAvatar = session.user.user_metadata?.avatar_url || "";
                 await supabase.from("subscribers").insert([
                     {
                         user_id: session.user.id,
@@ -79,8 +81,22 @@ export default function PainelLayout({
                         company: "",
                         plan: "free",
                         status: "ACTIVE",
+                        avatar_url: googleAvatar
                     },
                 ]);
+                setAvatarUrl(googleAvatar);
+            } else {
+                // If subscriber exists but has no avatar, try to sync from Google
+                if (!sub.avatar_url && session.user.user_metadata?.avatar_url) {
+                    const googleAvatar = session.user.user_metadata.avatar_url;
+                    await supabase
+                        .from("subscribers")
+                        .update({ avatar_url: googleAvatar })
+                        .eq("id", sub.id);
+                    setAvatarUrl(googleAvatar);
+                } else {
+                    setAvatarUrl(sub.avatar_url);
+                }
             }
 
             setUser(session.user);
@@ -227,10 +243,15 @@ export default function PainelLayout({
                     </button>
                     <div className="flex items-center gap-3 relative">
                         <div 
-                            className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white text-xs font-medium cursor-pointer hover:opacity-80 transition"
+                            className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white text-xs font-medium cursor-pointer hover:opacity-80 transition overflow-hidden"
                             onClick={() => setMenuOpen(!menuOpen)}
                         >
-                            {user?.email?.[0]?.toUpperCase() || "U"}
+                            {avatarUrl ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                            ) : (
+                                user?.email?.[0]?.toUpperCase() || "U"
+                            )}
                         </div>
 
                         {menuOpen && (

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateSubscriberStatus } from "@/lib/supabase";
+import { updateSubscriberStatus, updateTransactionStatus } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
     try {
@@ -10,8 +10,31 @@ export async function POST(request: NextRequest) {
             const billingId = data?.id || data?.billing?.id;
 
             if (billingId) {
-                await updateSubscriberStatus(billingId, "PAID");
-                console.log(`✅ Pagamento confirmado para billing: ${billingId}`);
+                let handled = false;
+
+                // Try to update subscription
+                try {
+                    await updateSubscriberStatus(billingId, "PAID");
+                    console.log(`✅ Assinatura confirmada para billing: ${billingId}`);
+                    handled = true;
+                } catch (e) {
+                    // Ignore error, might not be a subscription
+                }
+
+                if (!handled) {
+                    // Try to update transaction (credits)
+                    try {
+                        await updateTransactionStatus(billingId, "COMPLETED");
+                        console.log(`✅ Créditos confirmados para billing: ${billingId}`);
+                        handled = true;
+                    } catch (e) {
+                        // Ignore error
+                    }
+                }
+
+                if (!handled) {
+                    console.warn(`⚠️ Billing ${billingId} não encontrado como assinatura ou transação.`);
+                }
             }
         }
 

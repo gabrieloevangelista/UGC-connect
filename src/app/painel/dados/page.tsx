@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Icon } from "@iconify/react";
 import { supabase } from "@/lib/supabase";
 import CreditCard from "@/components/CreditCard";
@@ -15,9 +15,10 @@ interface ProfileData {
     company: string;
     plan?: string;
     status?: string;
+    credits?: number;
 }
 
-type TabType = 'perfil' | 'seguranca' | 'assinatura' | 'pagamento';
+type TabType = 'perfil' | 'seguranca' | 'carteira' | 'assinatura' | 'pagamento';
 
 export default function ConfigPage() {
     const { showToast } = useToast();
@@ -60,11 +61,22 @@ export default function ConfigPage() {
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
 
+    // Avatar State
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Wallet State
+    const [transactions, setTransactions] = useState<any[]>([]);
+    const [addCreditAmount, setAddCreditAmount] = useState("");
+    const [processingCredit, setProcessingCredit] = useState(false);
+
     useEffect(() => {
         const fetchProfile = async () => {
             const { data: { user } } = await supabase.auth.getUser();
 
             if (user) {
+                // Fetch subscriber data
                 const { data } = await supabase
                     .from("subscribers")
                     .select("*")
@@ -79,15 +91,74 @@ export default function ConfigPage() {
                         tax_id: data.tax_id || "",
                         company: data.company || "",
                         plan: data.plan || "Nenhum",
-                        status: data.status || "Inativo"
+                        status: data.status || "Inativo",
+                        credits: data.credits || 0
                     });
+                    setAvatarUrl(data.avatar_url);
                 }
+
+                // Fetch transactions
+                const { data: transactionsData } = await supabase
+                    .from("transactions")
+                    .select("*")
+                    .eq("user_id", user.id)
+                    .order("created_at", { ascending: false });
+                
+                setTransactions(transactionsData || []);
             }
             setLoading(false);
         };
 
         fetchProfile();
     }, []);
+
+    const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        try {
+            setUploadingAvatar(true);
+            setError("");
+
+            if (!event.target.files || event.target.files.length === 0) {
+                throw new Error("Selecione uma imagem para fazer upload.");
+            }
+
+            const file = event.target.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random()}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("Usuário não autenticado");
+
+            // Upload image
+            const { error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            // Get Public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('avatars')
+                .getPublicUrl(filePath);
+
+            // Update profile
+            const { error: updateError } = await supabase
+                .from('subscribers')
+                .update({ avatar_url: publicUrl })
+                .eq('user_id', user.id);
+
+            if (updateError) throw updateError;
+
+            setAvatarUrl(publicUrl);
+            setSuccess("Foto de perfil atualizada com sucesso!");
+            setTimeout(() => setSuccess(""), 3000);
+        } catch (error) {
+            setError(error instanceof Error ? error.message : "Erro ao fazer upload da imagem");
+        } finally {
+            setUploadingAvatar(false);
+        }
+    };
+
 
     // --- Tab 1: Profile ---
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -257,6 +328,57 @@ export default function ConfigPage() {
         }
     };
 
+    const handleAddCredits = async () => {
+        setProcessingCredit(true);
+        setError("");
+        setSuccess("");
+
+        try {
+            // Remove non-numeric chars except comma and dot, then normalize
+            // Assuming input might be "100,00" or "100.00"
+            let cleanAmount = addCreditAmount.replace(/[^0-9.,]/g, '');
+            cleanAmount = cleanAmount.replace(',', '.');
+            const amount = parseFloat(cleanAmount);
+
+            if (isNaN(amount) || amount < 5) {
+                throw new Error("Valor mínimo para recarga é R$ 5,00.");
+            }
+
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("Usuário não autenticado");
+
+            if (!formData.name || !formData.phone || !formData.tax_id) {
+                throw new Error("Complete seu perfil (Nome, Telefone e CPF/CNPJ) antes de adicionar créditos.");
+            }
+
+            const res = await fetch('/api/credits/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    taxId: formData.tax_id,
+                    amount,
+                    userId: user.id
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Erro ao gerar pagamento");
+
+            if (data.checkoutUrl) {
+                window.location.href = data.checkoutUrl;
+            } else {
+                throw new Error("URL de checkout não recebida");
+            }
+
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Erro ao adicionar créditos");
+            setProcessingCredit(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
@@ -267,6 +389,7 @@ export default function ConfigPage() {
 
     const tabs = [
         { id: 'perfil', label: 'Perfil', icon: 'solar:user-circle-linear' },
+        { id: 'carteira', label: 'Carteira & Créditos', icon: 'solar:wallet-money-linear' },
         { id: 'seguranca', label: 'Segurança', icon: 'solar:lock-keyhole-linear' },
         // { id: 'assinatura', label: 'Assinatura', icon: 'solar:crown-linear' },
         // { id: 'pagamento', label: 'Pagamento', icon: 'solar:card-outline' },
@@ -320,9 +443,92 @@ export default function ConfigPage() {
                         {/* --- TAB: PERFIL --- */}
                         {activeTab === 'perfil' && (
                             <form onSubmit={handleProfileSubmit} className="space-y-6">
+                                {/* Profile Completion Wizard */}
+                                <div className="mb-8 bg-stone-50 rounded-xl p-4 border border-stone-100">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-sm font-medium text-stone-900">Complete seu Perfil</h3>
+                                        <span className="text-xs font-medium text-stone-500">
+                                            {(() => {
+                                                let filled = 0;
+                                                if (formData.name) filled++;
+                                                if (formData.phone) filled++;
+                                                if (formData.tax_id) filled++;
+                                                if (formData.company) filled++;
+                                                if (avatarUrl) filled++;
+                                                return Math.round((filled / 5) * 100);
+                                            })()}% Completo
+                                        </span>
+                                    </div>
+                                    <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-stone-900 rounded-full transition-all duration-500"
+                                            style={{ width: `${(() => {
+                                                let filled = 0;
+                                                if (formData.name) filled++;
+                                                if (formData.phone) filled++;
+                                                if (formData.tax_id) filled++;
+                                                if (formData.company) filled++;
+                                                if (avatarUrl) filled++;
+                                                return Math.round((filled / 5) * 100);
+                                            })()}%` }}
+                                        />
+                                    </div>
+                                    <div className="mt-3 flex flex-wrap gap-2">
+                                        {!formData.name && <span className="text-[10px] px-2 py-1 bg-red-50 text-red-600 rounded-md border border-red-100">Nome pendente</span>}
+                                        {!formData.phone && <span className="text-[10px] px-2 py-1 bg-red-50 text-red-600 rounded-md border border-red-100">Telefone pendente</span>}
+                                        {!formData.tax_id && <span className="text-[10px] px-2 py-1 bg-red-50 text-red-600 rounded-md border border-red-100">CPF/CNPJ pendente</span>}
+                                        {!formData.company && <span className="text-[10px] px-2 py-1 bg-yellow-50 text-yellow-600 rounded-md border border-yellow-100">Empresa pendente</span>}
+                                        {!avatarUrl && <span className="text-[10px] px-2 py-1 bg-yellow-50 text-yellow-600 rounded-md border border-yellow-100">Foto pendente</span>}
+                                    </div>
+                                </div>
+
                                 <div>
                                     <h2 className="text-lg font-medium text-stone-900">Informações Pessoais</h2>
                                     <p className="text-sm text-stone-500 mb-4">Atualize seus dados básicos e de contato.</p>
+                                    
+                                    <div className="flex items-center gap-6 mb-8 p-4 bg-stone-50 rounded-2xl border border-stone-100">
+                                        <div className="w-20 h-20 rounded-full bg-white overflow-hidden relative group border border-stone-200 shadow-sm">
+                                            {avatarUrl ? (
+                                                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-stone-300">
+                                                    <Icon icon="solar:user-circle-bold" width={48} />
+                                                </div>
+                                            )}
+                                            <div 
+                                                className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer backdrop-blur-[1px]" 
+                                                onClick={() => fileInputRef.current?.click()}
+                                            >
+                                                <Icon icon="solar:camera-add-linear" className="text-white" width={24} />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-medium text-stone-900">Foto de Perfil</h3>
+                                            <p className="text-xs text-stone-500 mb-3 max-w-[200px]">Carregue uma imagem para personalizar seu perfil.</p>
+                                            <input 
+                                                type="file" 
+                                                ref={fileInputRef} 
+                                                onChange={handleAvatarUpload} 
+                                                className="hidden" 
+                                                accept="image/*"
+                                            />
+                                            <button 
+                                                type="button" 
+                                                disabled={uploadingAvatar}
+                                                onClick={() => fileInputRef.current?.click()} 
+                                                className="text-xs font-medium text-stone-700 bg-white border border-stone-200 px-3 py-1.5 rounded-lg hover:bg-stone-50 transition shadow-sm flex items-center gap-2"
+                                            >
+                                                {uploadingAvatar ? (
+                                                    <>
+                                                        <Icon icon="solar:refresh-linear" className="animate-spin" />
+                                                        Enviando...
+                                                    </>
+                                                ) : (
+                                                    "Alterar Foto"
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                     <div>
@@ -354,6 +560,97 @@ export default function ConfigPage() {
                                     </button>
                                 </div>
                             </form>
+                        )}
+
+                        {/* --- TAB: CARTEIRA --- */}
+                        {activeTab === 'carteira' && (
+                            <div className="space-y-8">
+                                <div>
+                                    <h2 className="text-lg font-medium text-stone-900">Carteira Digital</h2>
+                                    <p className="text-sm text-stone-500 mb-4">Adicione créditos para solicitar novos vídeos sob demanda.</p>
+                                </div>
+
+                                {/* Balance Card */}
+                                <div className="bg-stone-900 text-white rounded-2xl p-6 md:p-8 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 p-8 opacity-10">
+                                        <Icon icon="solar:wallet-bold" width={120} />
+                                    </div>
+                                    <div className="relative z-10">
+                                        <p className="text-stone-400 text-sm font-medium uppercase tracking-wider mb-2">Saldo Disponível</p>
+                                        <h3 className="text-4xl md:text-5xl font-light tracking-tight mb-6">
+                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(formData.credits || 0)}
+                                        </h3>
+                                        
+                                        <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center">
+                                            <div className="w-full sm:max-w-xs">
+                                                <label className="text-xs text-stone-400 uppercase tracking-wide block mb-1.5">Adicionar Crédito (R$)</label>
+                                                <input 
+                                                    type="number" 
+                                                    value={addCreditAmount} 
+                                                    onChange={(e) => setAddCreditAmount(e.target.value)} 
+                                                    placeholder="0,00" 
+                                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder-stone-500 focus:ring-2 focus:ring-white/20 focus:border-white/30 outline-none transition"
+                                                />
+                                            </div>
+                                            <button 
+                                                onClick={handleAddCredits}
+                                                disabled={processingCredit || !addCreditAmount}
+                                                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white text-stone-900 font-medium hover:bg-stone-100 transition disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
+                                            >
+                                                {processingCredit ? <Icon icon="solar:refresh-linear" className="animate-spin" /> : <Icon icon="solar:card-send-linear" />}
+                                                Adicionar via Pix
+                                            </button>
+                                        </div>
+                                        <p className="text-xs text-stone-500 mt-3">
+                                            * Pagamento processado via AbacatePay (Pix). O saldo é creditado automaticamente após a confirmação.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Transaction History */}
+                                <div>
+                                    <h3 className="text-base font-medium text-stone-900 mb-4 flex items-center gap-2">
+                                        <Icon icon="solar:history-linear" />
+                                        Histórico de Transações
+                                    </h3>
+                                    <div className="border border-stone-100 rounded-2xl overflow-hidden">
+                                        {transactions.length > 0 ? (
+                                            <div className="divide-y divide-stone-100">
+                                                {transactions.map((tx) => (
+                                                    <div key={tx.id} className="p-4 flex items-center justify-between hover:bg-stone-50 transition">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.type === 'CREDIT' ? 'bg-emerald-50 text-emerald-500' : 'bg-red-50 text-red-500'}`}>
+                                                                <Icon icon={tx.type === 'CREDIT' ? "solar:arrow-left-down-linear" : "solar:arrow-right-up-linear"} width={20} />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-medium text-stone-900">{tx.description || (tx.type === 'CREDIT' ? 'Crédito Adicionado' : 'Uso de Saldo')}</p>
+                                                                <p className="text-xs text-stone-500">{new Date(tx.created_at).toLocaleDateString('pt-BR')} às {new Date(tx.created_at).toLocaleTimeString('pt-BR')}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className={`text-sm font-medium ${tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-stone-900'}`}>
+                                                                {tx.type === 'CREDIT' ? '+' : '-'} {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(tx.amount)}
+                                                            </p>
+                                                            <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-medium ${
+                                                                tx.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' :
+                                                                tx.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                                                                'bg-red-100 text-red-700'
+                                                            }`}>
+                                                                {tx.status === 'COMPLETED' ? 'Concluído' : tx.status === 'PENDING' ? 'Pendente' : 'Falhou'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="p-8 text-center text-stone-500">
+                                                <Icon icon="solar:bill-list-linear" width={48} className="mx-auto mb-2 opacity-20" />
+                                                <p className="text-sm">Nenhuma transação encontrada.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
                         )}
 
                         {/* --- TAB: SEGURANÇA --- */}
