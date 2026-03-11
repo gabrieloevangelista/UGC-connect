@@ -23,21 +23,39 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        let cleanPhone = phone.replace(/\D/g, '');
-        if (cleanPhone.startsWith('55') && cleanPhone.length > 11) {
+        // Sanitize phone: remove non-digits, strip country code 55 if present
+        let cleanPhone = phone.replace(/\D/g, "");
+        if (cleanPhone.startsWith("55") && cleanPhone.length > 11) {
             cleanPhone = cleanPhone.slice(2);
         }
 
-        const cleanTaxId = taxId.replace(/\D/g, '');
+        // Sanitize taxId: remove non-digits
+        const cleanTaxId = taxId.replace(/\D/g, "");
 
         if (cleanPhone.length !== 10 && cleanPhone.length !== 11) {
-            return NextResponse.json({ error: "O celular precisa ter DDD e o número (10 ou 11 dígitos, sem 55)" }, { status: 400 });
+            return NextResponse.json(
+                { error: "Celular inválido: informe DDD + número (10 ou 11 dígitos, sem código do país)" },
+                { status: 400 }
+            );
         }
         if (cleanTaxId.length !== 11 && cleanTaxId.length !== 14) {
-            return NextResponse.json({ error: "O CPF ou CNPJ está inválido" }, { status: 400 });
+            return NextResponse.json(
+                { error: "CPF ou CNPJ inválido" },
+                { status: 400 }
+            );
         }
 
-        // 1. Create Customer in AbacatePay
+        // Determine base URL for return/webhook URLs
+        const origin =
+            request.headers.get("origin") ||
+            (process.env.NEXT_PUBLIC_SITE_URL
+                ? process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")
+                : null) ||
+            (process.env.VERCEL_URL
+                ? `https://${process.env.VERCEL_URL}`
+                : "https://ugc-connect.vercel.app");
+
+        // 1. Create or retrieve Customer in AbacatePay
         const customerResponse = await createCustomer({
             name,
             email,
@@ -46,70 +64,75 @@ export async function POST(request: NextRequest) {
         });
 
         if (!customerResponse?.data?.id) {
-            throw new Error(customerResponse?.error || "Falha ao obter ID do cliente no AbacatePay");
+            const errMsg = customerResponse?.error || "Falha ao criar cliente no AbacatePay";
+            console.error("AbacatePay createCustomer error:", customerResponse);
+            throw new Error(errMsg);
         }
 
         const customerId = customerResponse.data.id;
 
-        // 2. Create Billing in AbacatePay
-        const origin =
-            request.headers.get("origin") ||
-            process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://ugc-connect.vercel.app");
+        // 2. Create Billing (Checkout) in AbacatePay
         const billingResponse = await createBilling({
             customerId,
-            productName: "Créditos UGC",
-            productDescription: `Adição de R$ ${numericAmount.toFixed(2)} em créditos`,
-            price: Math.round(numericAmount * 100), // Convert to cents
+            productName: "Créditos UGC Connect",
+            productDescription: `Recarga de R$ ${numericAmount.toFixed(2)} em créditos`,
+            price: Math.round(numericAmount * 100), // convert to cents
             frequency: "ONE_TIME",
-            returnUrl: `${origin}/painel/dados?tab=carteira&success=true`,
-            completionUrl: `${origin}/api/webhook`, // webhook opcional, mas vamos usar a URL baseada na request pra testes se estiver no staging
+            returnUrl: `${origin}/painel/dados?tab=carteira&payment=pending`,
+            completionUrl: `${origin}/api/webhook`,
         });
 
         if (!billingResponse?.data?.id) {
-            throw new Error(billingResponse?.error || "Falha ao obter ID da cobrança no AbacatePay");
+            const errMsg = billingResponse?.error || "Falha ao criar cobrança no AbacatePay";
+            console.error("AbacatePay createBilling error:", billingResponse);
+            throw new Error(errMsg);
         }
 
         const billingId = billingResponse.data.id;
         const checkoutUrl = billingResponse.data.url;
 
-        // 3. Save Transaction in Supabase (Using Authenticated Client to pass RLS)
-        const authHeader = request.headers.get('Authorization');
+        // 3. Record Transaction in Supabase as PENDING
+        // Use user's Bearer token so RLS allows the insert
+        const authHeader = request.headers.get("Authorization");
 
-        let supabaseClient;
-        if (authHeader) {
-            supabaseClient = createClient(
+        const supabaseClient = authHeader
+            ? createClient(
                 process.env.NEXT_PUBLIC_SUPABASE_URL!,
                 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
                 {
                     global: {
-                        headers: {
-                            Authorization: authHeader,
-                        },
+                        headers: { Authorization: authHeader },
                     },
                 }
+            )
+            : createClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
             );
-        } else {
-            // Fallback to anon/admin if no header (might fail RLS, but avoids breaking)
-            supabaseClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
-        }
 
         const { error: txError } = await supabaseClient
             .from("transactions")
-            .insert([{
-                user_id: userId,
-                amount: numericAmount,
-                type: "CREDIT",
-                description: "Adição de créditos via Pix",
-                status: "PENDING",
-                abacatepay_billing_id: billingId,
-            }])
+            .insert([
+                {
+                    user_id: userId,
+                    amount: numericAmount,
+                    type: "CREDIT",
+                    description: `Recarga de R$ ${numericAmount.toFixed(2)} via AbacatePay`,
+                    status: "PENDING",
+                    abacatepay_billing_id: billingId,
+                },
+            ])
             .select()
             .single();
 
         if (txError) {
-            throw new Error(`Erro ao criar transação: ${txError.message}`);
+            // Log but don't block – payment can still proceed
+            console.error("Erro ao registrar transação no Supabase:", txError.message);
         }
+
+        console.log(
+            `✅ Billing criado: ${billingId} | Checkout: ${checkoutUrl} | User: ${userId} | Valor: R$ ${numericAmount}`
+        );
 
         return NextResponse.json({ checkoutUrl });
     } catch (error) {
@@ -117,11 +140,11 @@ export async function POST(request: NextRequest) {
 
         let message = "Erro interno no servidor";
         if (error instanceof Error) {
-            // Se o erro começa com um JSON em string do AbacatePay, vamos tentar parsear
+            // Try to parse AbacatePay JSON error messages
             if (error.message.includes("{")) {
                 try {
-                    const match = error.message.match(/({.*})/);
-                    if (match && match[1]) {
+                    const match = error.message.match(/(\{.*\})/);
+                    if (match?.[1]) {
                         const parsed = JSON.parse(match[1]);
                         message = parsed.error || parsed.message || error.message;
                     } else {

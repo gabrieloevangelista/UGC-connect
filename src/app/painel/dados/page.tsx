@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { supabase, type Transaction } from "@/lib/supabase";
 import CreditCard from "@/components/CreditCard";
@@ -70,6 +71,32 @@ export default function ConfigPage() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [addCreditAmount, setAddCreditAmount] = useState("");
     const [processingCredit, setProcessingCredit] = useState(false);
+    const [paymentPending, setPaymentPending] = useState(false);
+
+    const searchParams = useSearchParams();
+
+    const refreshWallet = useCallback(async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: subData } = await supabase
+            .from("subscribers")
+            .select("credits")
+            .eq("user_id", user.id)
+            .single();
+
+        if (subData) {
+            setFormData(prev => ({ ...prev, credits: subData.credits || 0 }));
+        }
+
+        const { data: txData } = await supabase
+            .from("transactions")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false });
+
+        setTransactions(txData || []);
+    }, []);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -110,7 +137,25 @@ export default function ConfigPage() {
         };
 
         fetchProfile();
-    }, []);
+
+        // Detect return from AbacatePay checkout
+        const paymentParam = searchParams.get("payment");
+        const tabParam = searchParams.get("tab");
+        if (paymentParam === "pending") {
+            setPaymentPending(true);
+            if (tabParam === "carteira") setActiveTab("carteira");
+            // Try to refresh every 5 seconds for up to 60s to catch webhook
+            let attempts = 0;
+            const interval = setInterval(async () => {
+                attempts++;
+                await refreshWallet();
+                if (attempts >= 12) clearInterval(interval);
+            }, 5000);
+            // Cleanup on unmount
+            return () => clearInterval(interval);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams, refreshWallet]);
 
     const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         try {
@@ -580,6 +625,24 @@ export default function ConfigPage() {
                                     <h2 className="text-lg font-medium text-stone-900">Carteira Digital</h2>
                                     <p className="text-sm text-stone-500 mb-4">Adicione créditos para solicitar novos vídeos sob demanda.</p>
                                 </div>
+
+                                {/* Banner: pagamento pendente aguardando confirmação  */}
+                                {paymentPending && (
+                                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-2 flex items-start gap-3">
+                                        <Icon icon="solar:clock-circle-bold-duotone" width={22} className="text-amber-500 mt-0.5 shrink-0 animate-pulse" />
+                                        <div className="flex-1">
+                                            <p className="text-sm font-medium text-amber-900">Aguardando confirmação do pagamento</p>
+                                            <p className="text-xs text-amber-700 mt-0.5">Seu saldo será atualizado automaticamente após a confirmação. Se já pagou, clique em atualizar.</p>
+                                        </div>
+                                        <button
+                                            onClick={refreshWallet}
+                                            className="text-xs text-amber-700 border border-amber-300 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition flex items-center gap-1.5 shrink-0"
+                                        >
+                                            <Icon icon="solar:refresh-linear" width={14} />
+                                            Atualizar
+                                        </button>
+                                    </div>
+                                )}
 
                                 {/* Balance Card */}
                                 <div className="bg-stone-900 text-white rounded-2xl p-6 md:p-8 relative overflow-hidden">
