@@ -13,6 +13,17 @@ export interface Subscriber {
     phone: string;
     tax_id: string;
     company?: string;
+    company_legal_name?: string | null;
+    company_trade_name?: string | null;
+    company_ie?: string | null;
+    company_size?: string | null;
+    company_street?: string | null;
+    company_number?: string | null;
+    company_complement?: string | null;
+    company_neighborhood?: string | null;
+    company_city?: string | null;
+    company_state?: string | null;
+    company_zip?: string | null;
     plan: string;
     abacatepay_customer_id?: string;
     abacatepay_billing_id?: string;

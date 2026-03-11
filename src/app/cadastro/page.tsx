@@ -15,6 +15,17 @@ export default function CadastroPage() {
         phone: "",
         taxId: "",
         company: "",
+        companyLegalName: "",
+        companyTradeName: "",
+        companyIe: "",
+        companySize: "",
+        companyStreet: "",
+        companyNumber: "",
+        companyComplement: "",
+        companyNeighborhood: "",
+        companyCity: "",
+        companyState: "",
+        companyZip: "",
         password: "",
     });
     const [loading, setLoading] = useState(false);
@@ -73,12 +84,36 @@ export default function CadastroPage() {
             const data = (await response.json()) as {
                 razao_social?: string | null;
                 nome_fantasia?: string | null;
+                inscricao_estadual?: string | null;
+                descricao_porte?: string | null;
+                porte?: string | null;
+                logradouro?: string | null;
+                numero?: string | null;
+                complemento?: string | null;
+                bairro?: string | null;
+                municipio?: string | null;
+                uf?: string | null;
+                cep?: string | null;
             };
 
             const companyName = data.nome_fantasia || data.razao_social;
-            if (companyName) {
-                setFormData((prev) => ({ ...prev, company: companyName }));
-            }
+            const companySize = data.descricao_porte || data.porte || "";
+
+            setFormData((prev) => ({
+                ...prev,
+                company: companyName || prev.company,
+                companyLegalName: data.razao_social || "",
+                companyTradeName: data.nome_fantasia || "",
+                companyIe: data.inscricao_estadual || "",
+                companySize: companySize,
+                companyStreet: data.logradouro || "",
+                companyNumber: data.numero || "",
+                companyComplement: data.complemento || "",
+                companyNeighborhood: data.bairro || "",
+                companyCity: data.municipio || "",
+                companyState: data.uf || "",
+                companyZip: data.cep || "",
+            }));
         } catch (err) {
             const message = err instanceof Error ? err.message : "Não foi possível consultar o CNPJ";
             setCompanyLookupError(message);
@@ -100,6 +135,20 @@ export default function CadastroPage() {
             } else if (lastFetchedCnpj && digits.length < 14) {
                 setLastFetchedCnpj(null);
                 setCompanyLookupError("");
+                setFormData((prev) => ({
+                    ...prev,
+                    companyLegalName: "",
+                    companyTradeName: "",
+                    companyIe: "",
+                    companySize: "",
+                    companyStreet: "",
+                    companyNumber: "",
+                    companyComplement: "",
+                    companyNeighborhood: "",
+                    companyCity: "",
+                    companyState: "",
+                    companyZip: "",
+                }));
             }
             return;
         }
@@ -126,6 +175,17 @@ export default function CadastroPage() {
                         phone: formData.phone,
                         tax_id: formData.taxId,
                         company: formData.company,
+                        company_legal_name: formData.companyLegalName || null,
+                        company_trade_name: formData.companyTradeName || null,
+                        company_ie: formData.companyIe || null,
+                        company_size: formData.companySize || null,
+                        company_street: formData.companyStreet || null,
+                        company_number: formData.companyNumber || null,
+                        company_complement: formData.companyComplement || null,
+                        company_neighborhood: formData.companyNeighborhood || null,
+                        company_city: formData.companyCity || null,
+                        company_state: formData.companyState || null,
+                        company_zip: formData.companyZip || null,
                         plan: "free",
                         status: "ACTIVE",
                     },
