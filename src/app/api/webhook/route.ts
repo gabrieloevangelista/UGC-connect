@@ -6,7 +6,9 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { event, data } = body;
 
-        if (event === "billing.paid") {
+        console.log("🔔 Recebido webhook:", event);
+
+        if (event === "billing.paid" || event === "pix.paid") {
             const billingId = data?.id || data?.billing?.id;
 
             if (billingId) {

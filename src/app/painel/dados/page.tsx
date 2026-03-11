@@ -103,7 +103,7 @@ export default function ConfigPage() {
                     .select("*")
                     .eq("user_id", user.id)
                     .order("created_at", { ascending: false });
-                
+
                 setTransactions(transactionsData || []);
             }
             setLoading(false);
@@ -460,17 +460,19 @@ export default function ConfigPage() {
                                         </span>
                                     </div>
                                     <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
-                                        <div 
+                                        <div
                                             className="h-full bg-stone-900 rounded-full transition-all duration-500"
-                                            style={{ width: `${(() => {
-                                                let filled = 0;
-                                                if (formData.name) filled++;
-                                                if (formData.phone) filled++;
-                                                if (formData.tax_id) filled++;
-                                                if (formData.company) filled++;
-                                                if (avatarUrl) filled++;
-                                                return Math.round((filled / 5) * 100);
-                                            })()}%` }}
+                                            style={{
+                                                width: `${(() => {
+                                                    let filled = 0;
+                                                    if (formData.name) filled++;
+                                                    if (formData.phone) filled++;
+                                                    if (formData.tax_id) filled++;
+                                                    if (formData.company) filled++;
+                                                    if (avatarUrl) filled++;
+                                                    return Math.round((filled / 5) * 100);
+                                                })()}%`
+                                            }}
                                         />
                                     </div>
                                     <div className="mt-3 flex flex-wrap gap-2">
@@ -485,7 +487,7 @@ export default function ConfigPage() {
                                 <div>
                                     <h2 className="text-lg font-medium text-stone-900">Informações Pessoais</h2>
                                     <p className="text-sm text-stone-500 mb-4">Atualize seus dados básicos e de contato.</p>
-                                    
+
                                     <div className="flex items-center gap-6 mb-8 p-4 bg-stone-50 rounded-2xl border border-stone-100">
                                         <div className="w-20 h-20 rounded-full bg-white overflow-hidden relative group border border-stone-200 shadow-sm">
                                             {avatarUrl ? (
@@ -495,8 +497,8 @@ export default function ConfigPage() {
                                                     <Icon icon="solar:user-circle-bold" width={48} />
                                                 </div>
                                             )}
-                                            <div 
-                                                className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer backdrop-blur-[1px]" 
+                                            <div
+                                                className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer backdrop-blur-[1px]"
                                                 onClick={() => fileInputRef.current?.click()}
                                             >
                                                 <Icon icon="solar:camera-add-linear" className="text-white" width={24} />
@@ -505,17 +507,17 @@ export default function ConfigPage() {
                                         <div>
                                             <h3 className="text-sm font-medium text-stone-900">Foto de Perfil</h3>
                                             <p className="text-xs text-stone-500 mb-3 max-w-[200px]">Carregue uma imagem para personalizar seu perfil.</p>
-                                            <input 
-                                                type="file" 
-                                                ref={fileInputRef} 
-                                                onChange={handleAvatarUpload} 
-                                                className="hidden" 
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleAvatarUpload}
+                                                className="hidden"
                                                 accept="image/*"
                                             />
-                                            <button 
-                                                type="button" 
+                                            <button
+                                                type="button"
                                                 disabled={uploadingAvatar}
-                                                onClick={() => fileInputRef.current?.click()} 
+                                                onClick={() => fileInputRef.current?.click()}
                                                 className="text-xs font-medium text-stone-700 bg-white border border-stone-200 px-3 py-1.5 rounded-lg hover:bg-stone-50 transition shadow-sm flex items-center gap-2"
                                             >
                                                 {uploadingAvatar ? (
@@ -580,7 +582,7 @@ export default function ConfigPage() {
                                         <h3 className="text-4xl md:text-5xl font-light tracking-tight mb-6 font-mono">
                                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(formData.credits || 0)}
                                         </h3>
-                                        
+
                                         <div className="mb-6">
                                             <label className="text-xs text-stone-400 uppercase tracking-wide block mb-2">Valores Predefinidos</label>
                                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -588,11 +590,10 @@ export default function ConfigPage() {
                                                     <button
                                                         key={val}
                                                         onClick={() => setAddCreditAmount(val.toString())}
-                                                        className={`px-4 py-2.5 rounded-xl text-sm font-medium transition font-mono border ${
-                                                            addCreditAmount === val.toString() 
-                                                                ? 'bg-white text-stone-900 border-white' 
-                                                                : 'bg-white/5 text-stone-400 border-white/5 hover:bg-white/10 hover:text-white hover:border-white/10'
-                                                        }`}
+                                                        className={`px-4 py-2.5 rounded-xl text-sm font-medium transition font-mono border ${addCreditAmount === val.toString()
+                                                            ? 'bg-white text-stone-900 border-white'
+                                                            : 'bg-white/5 text-stone-400 border-white/5 hover:bg-white/10 hover:text-white hover:border-white/10'
+                                                            }`}
                                                     >
                                                         R$ {val}
                                                     </button>
@@ -600,29 +601,31 @@ export default function ConfigPage() {
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center">
-                                            <div className="w-full sm:max-w-xs">
-                                                <label className="text-xs text-stone-400 uppercase tracking-wide block mb-1.5">Outro Valor (R$)</label>
-                                                <input 
-                                                    type="number" 
-                                                    value={addCreditAmount} 
-                                                    onChange={(e) => setAddCreditAmount(e.target.value)} 
-                                                    placeholder="0,00" 
-                                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder-stone-500 focus:ring-2 focus:ring-white/20 focus:border-white/30 outline-none transition font-mono"
-                                                />
+                                        <>
+                                            <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center">
+                                                <div className="w-full sm:max-w-xs">
+                                                    <label className="text-xs text-stone-400 uppercase tracking-wide block mb-1.5">Outro Valor (R$)</label>
+                                                    <input
+                                                        type="number"
+                                                        value={addCreditAmount}
+                                                        onChange={(e) => setAddCreditAmount(e.target.value)}
+                                                        placeholder="0,00"
+                                                        className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder-stone-500 focus:ring-2 focus:ring-white/20 focus:border-white/30 outline-none transition font-mono"
+                                                    />
+                                                </div>
+                                                <button
+                                                    onClick={handleAddCredits}
+                                                    disabled={processingCredit || !addCreditAmount}
+                                                    className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white text-stone-900 font-medium hover:bg-stone-100 transition disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
+                                                >
+                                                    {processingCredit ? <Icon icon="solar:refresh-linear" className="animate-spin" /> : <Icon icon="solar:card-send-linear" />}
+                                                    Adicionar Créditos
+                                                </button>
                                             </div>
-                                            <button 
-                                                onClick={handleAddCredits}
-                                                disabled={processingCredit || !addCreditAmount}
-                                                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white text-stone-900 font-medium hover:bg-stone-100 transition disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
-                                            >
-                                                {processingCredit ? <Icon icon="solar:refresh-linear" className="animate-spin" /> : <Icon icon="solar:card-send-linear" />}
-                                                Adicionar via Pix
-                                            </button>
-                                        </div>
-                                        <p className="text-xs text-stone-500 mt-3">
-                                            * Pagamento processado via AbacatePay (Pix). O saldo é creditado automaticamente após a confirmação.
-                                        </p>
+                                            <p className="text-xs text-stone-500 mt-3">
+                                                * Pagamento processado via AbacatePay (Pix ou Cartão). O saldo é creditado automaticamente após a confirmação.
+                                            </p>
+                                        </>
                                     </div>
                                 </div>
 
@@ -656,11 +659,10 @@ export default function ConfigPage() {
                                                             <p className={`text-sm font-medium font-mono ${tx.type === 'CREDIT' ? 'text-emerald-600' : 'text-stone-900'}`}>
                                                                 {tx.type === 'CREDIT' ? '+' : '-'} {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(tx.amount)}
                                                             </p>
-                                                            <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-medium ${
-                                                                tx.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' :
+                                                            <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-medium ${tx.status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' :
                                                                 tx.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-                                                                'bg-red-100 text-red-700'
-                                                            }`}>
+                                                                    'bg-red-100 text-red-700'
+                                                                }`}>
                                                                 {tx.status === 'COMPLETED' ? 'Concluído' : tx.status === 'PENDING' ? 'Pendente' : 'Falhou'}
                                                             </span>
                                                         </div>

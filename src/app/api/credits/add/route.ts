@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
             price: Math.round(numericAmount * 100), // Convert to cents
             frequency: "ONE_TIME",
             returnUrl: `${origin}/painel/dados?tab=carteira&success=true`,
-            completionUrl: `${origin}/painel/dados?tab=carteira&payment=success`,
+            completionUrl: `${origin}/api/webhook`, // webhook opcional, mas vamos usar a URL baseada na request pra testes se estiver no staging
         });
 
         if (!billingResponse?.data?.id) {

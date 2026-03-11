@@ -29,6 +29,18 @@ export interface CreateBillingData {
     completionUrl: string;
 }
 
+export interface CreatePixQrCodeData {
+    amount: number; // em centavos
+    description?: string;
+    customer?: {
+        name: string;
+        cellphone: string;
+        email: string;
+        taxId: string;
+    };
+    metadata?: Record<string, any>;
+}
+
 export async function createCustomer(data: CreateCustomerData) {
     const res = await fetch(`${ABACATEPAY_API_URL}/customer/create`, {
         method: "POST",
@@ -88,6 +100,21 @@ export async function listBillings() {
     if (!res.ok) {
         const error = await res.text();
         throw new Error(`Erro ao listar cobranças: ${error}`);
+    }
+
+    return res.json();
+}
+
+export async function createPixQrCode(data: CreatePixQrCodeData) {
+    const res = await fetch(`${ABACATEPAY_API_URL}/pixQrCode/create`, {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        const error = await res.text();
+        throw new Error(`Erro ao gerar QRCode PIX: ${error}`);
     }
 
     return res.json();
