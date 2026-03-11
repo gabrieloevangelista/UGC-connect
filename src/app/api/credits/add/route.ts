@@ -23,8 +23,19 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const cleanPhone = phone.replace(/\D/g, '');
-        const cleanTaxId = taxId.replace(/\D/g, '');
+        let cleanPhone = phone.replace(/\D/g, '');
+        if (cleanPhone.startsWith('55') && cleanPhone.length > 11) {
+            cleanPhone = cleanPhone.slice(2);
+        }
+
+        let cleanTaxId = taxId.replace(/\D/g, '');
+
+        if (cleanPhone.length !== 10 && cleanPhone.length !== 11) {
+            return NextResponse.json({ error: "O celular precisa ter DDD e o número (10 ou 11 dígitos, sem 55)" }, { status: 400 });
+        }
+        if (cleanTaxId.length !== 11 && cleanTaxId.length !== 14) {
+            return NextResponse.json({ error: "O CPF ou CNPJ está inválido" }, { status: 400 });
+        }
 
         // 1. Create Customer in AbacatePay
         const customerResponse = await createCustomer({
@@ -103,7 +114,27 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ checkoutUrl });
     } catch (error) {
         console.error("ERRO AO ADICIONAR CRÉDITOS:", error);
-        const message = error instanceof Error ? error.message : "Erro interno no servidor";
+
+        let message = "Erro interno no servidor";
+        if (error instanceof Error) {
+            // Se o erro começa com um JSON em string do AbacatePay, vamos tentar parsear
+            if (error.message.includes("{")) {
+                try {
+                    const match = error.message.match(/({.*})/);
+                    if (match && match[1]) {
+                        const parsed = JSON.parse(match[1]);
+                        message = parsed.error || parsed.message || error.message;
+                    } else {
+                        message = error.message;
+                    }
+                } catch (e) {
+                    message = error.message;
+                }
+            } else {
+                message = error.message;
+            }
+        }
+
         return NextResponse.json({ error: message }, { status: 500 });
     }
 }
