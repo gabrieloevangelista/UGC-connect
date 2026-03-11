@@ -94,7 +94,7 @@ export default function LoginPage() {
                                 try {
                                     setLoading(true);
                                     await signInWithGoogle();
-                                } catch (err) {
+                                } catch {
                                     setError("Erro ao logar com Google");
                                     setLoading(false);
                                 }

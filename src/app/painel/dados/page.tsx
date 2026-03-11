@@ -497,7 +497,10 @@ export default function ConfigPage() {
                                     <div className="flex items-center gap-6 mb-8 p-4 bg-stone-50 rounded-2xl border border-stone-100">
                                         <div className="w-20 h-20 rounded-full bg-white overflow-hidden relative group border border-stone-200 shadow-sm">
                                             {avatarUrl ? (
-                                                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                                <>
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                                </>
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-stone-300">
                                                     <Icon icon="solar:user-circle-bold" width={48} />

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
             cleanPhone = cleanPhone.slice(2);
         }
 
-        let cleanTaxId = taxId.replace(/\D/g, '');
+        const cleanTaxId = taxId.replace(/\D/g, '');
 
         if (cleanPhone.length !== 10 && cleanPhone.length !== 11) {
             return NextResponse.json({ error: "O celular precisa ter DDD e o número (10 ou 11 dígitos, sem 55)" }, { status: 400 });
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
                     } else {
                         message = error.message;
                     }
-                } catch (e) {
+                } catch {
                     message = error.message;
                 }
             } else {

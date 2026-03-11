@@ -109,6 +109,7 @@ export default function CreatorsMarketplacePage() {
                     >
                         <div className="flex items-center gap-4">
                             <div className="w-14 h-14 rounded-2xl overflow-hidden bg-stone-100 shrink-0">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                     src={creator.photoUrl}
                                     alt={creator.name}

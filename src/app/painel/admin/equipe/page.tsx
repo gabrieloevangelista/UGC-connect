@@ -20,12 +20,13 @@ export default function TeamManagementPage() {
     const [newAdminEmail, setNewAdminEmail] = useState("");
     const [adding, setAdding] = useState(false);
     const [isMaster, setIsMaster] = useState(false);
-    
+
     const { showToast } = useToast();
     const { confirm } = useConfirm();
 
     useEffect(() => {
         fetchAdmins();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchAdmins = async () => {
@@ -181,7 +182,7 @@ export default function TeamManagementPage() {
                 <div className="px-6 py-4 border-b border-stone-100 bg-stone-50/50">
                     <h3 className="font-medium text-stone-900">Membros da Equipe ({admins.length})</h3>
                 </div>
-                
+
                 {admins.length === 0 ? (
                     <div className="p-8 text-center text-stone-500">
                         Nenhum administrador encontrado.
@@ -191,19 +192,17 @@ export default function TeamManagementPage() {
                         {admins.map((admin) => (
                             <div key={admin.id} className="p-6 flex items-center justify-between hover:bg-stone-50 transition">
                                 <div className="flex items-center gap-4">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium ${
-                                        admin.role === 'master' ? 'bg-purple-100 text-purple-700' : 'bg-stone-100 text-stone-600'
-                                    }`}>
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium ${admin.role === 'master' ? 'bg-purple-100 text-purple-700' : 'bg-stone-100 text-stone-600'
+                                        }`}>
                                         {admin.email.charAt(0).toUpperCase()}
                                     </div>
                                     <div>
                                         <div className="font-medium text-stone-900">{admin.email}</div>
                                         <div className="flex items-center gap-2 mt-1">
-                                            <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold ${
-                                                admin.role === 'master' 
-                                                    ? 'bg-purple-50 text-purple-700 border border-purple-100' 
+                                            <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold ${admin.role === 'master'
+                                                    ? 'bg-purple-50 text-purple-700 border border-purple-100'
                                                     : 'bg-stone-100 text-stone-600 border border-stone-200'
-                                            }`}>
+                                                }`}>
                                                 {admin.role === 'master' ? 'Master Admin' : 'Admin'}
                                             </span>
                                             <span className="text-xs text-stone-400">
@@ -212,7 +211,7 @@ export default function TeamManagementPage() {
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 {isMaster && admin.role !== 'master' && (
                                     <button
                                         onClick={() => handleRemoveAdmin(admin.id, admin.email)}

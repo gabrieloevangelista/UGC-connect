@@ -5,7 +5,6 @@ import { useRouter, useParams } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/Toast";
-import { useConfirm } from "@/components/ConfirmDialog";
 
 const statusConfig: Record<string, { label: string; color: string; icon: string }> = {
     PENDING: {
@@ -37,7 +36,6 @@ export default function SolicitacaoDetalhesPage() {
     const params = useParams();
     const router = useRouter();
     const { showToast } = useToast();
-    const { confirm } = useConfirm();
 
     const [loading, setLoading] = useState(true);
     const [request, setRequest] = useState<{
@@ -81,6 +79,7 @@ export default function SolicitacaoDetalhesPage() {
         if (params.id) {
             fetchRequestDetails(params.id as string);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params.id]);
 
     const fetchRequestDetails = async (id: string) => {
@@ -257,15 +256,14 @@ export default function SolicitacaoDetalhesPage() {
                     ) : (
                         <div className="w-full bg-stone-100 rounded-full h-2 mt-2">
                             <div
-                                className={`h-full rounded-full transition-all duration-500 ${
-                                    request.status === "DELIVERED" ? "w-full bg-emerald-500" :
+                                className={`h-full rounded-full transition-all duration-500 ${request.status === "DELIVERED" ? "w-full bg-emerald-500" :
                                     request.status === "IN_PROGRESS" ? "w-1/2 bg-blue-500" :
-                                    "w-5 bg-yellow-500"
-                                }`}
+                                        "w-5 bg-yellow-500"
+                                    }`}
                             />
                         </div>
                     )}
-                    
+
                     {/* Status Actions - Moved inside Status Card for better context */}
                     <div className="mt-6 pt-4 border-t border-stone-100">
                         <span className="text-xs font-medium text-stone-500 uppercase block mb-3">Alterar Status</span>
@@ -273,11 +271,10 @@ export default function SolicitacaoDetalhesPage() {
                             <button
                                 onClick={() => updateStatus('PENDING')}
                                 disabled={request.status === 'PENDING'}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${
-                                    request.status === 'PENDING' 
-                                        ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed'
-                                        : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
-                                }`}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${request.status === 'PENDING'
+                                    ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed'
+                                    : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
+                                    }`}
                             >
                                 <Icon icon="solar:clock-circle-linear" />
                                 Pendente
@@ -285,11 +282,10 @@ export default function SolicitacaoDetalhesPage() {
                             <button
                                 onClick={() => updateStatus('IN_PROGRESS')}
                                 disabled={request.status === 'IN_PROGRESS'}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${
-                                    request.status === 'IN_PROGRESS'
-                                        ? 'bg-blue-100 text-blue-400 border-blue-200 cursor-not-allowed'
-                                        : 'bg-white text-blue-600 border-blue-200 hover:bg-blue-50'
-                                }`}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${request.status === 'IN_PROGRESS'
+                                    ? 'bg-blue-100 text-blue-400 border-blue-200 cursor-not-allowed'
+                                    : 'bg-white text-blue-600 border-blue-200 hover:bg-blue-50'
+                                    }`}
                             >
                                 <Icon icon="solar:play-circle-linear" />
                                 Em Produção
@@ -297,11 +293,10 @@ export default function SolicitacaoDetalhesPage() {
                             <button
                                 onClick={() => updateStatus('DELIVERED')}
                                 disabled={request.status === 'DELIVERED'}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${
-                                    request.status === 'DELIVERED'
-                                        ? 'bg-emerald-100 text-emerald-400 border-emerald-200 cursor-not-allowed'
-                                        : 'bg-white text-emerald-600 border-emerald-200 hover:bg-emerald-50'
-                                }`}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${request.status === 'DELIVERED'
+                                    ? 'bg-emerald-100 text-emerald-400 border-emerald-200 cursor-not-allowed'
+                                    : 'bg-white text-emerald-600 border-emerald-200 hover:bg-emerald-50'
+                                    }`}
                             >
                                 <Icon icon="solar:check-circle-linear" />
                                 Entregar
@@ -350,7 +345,7 @@ export default function SolicitacaoDetalhesPage() {
                         <Icon icon="solar:document-text-linear" />
                         Dados do Projeto
                     </h3>
-                    
+
                     <div className="flex flex-col gap-6">
                         <div className="flex flex-col gap-6">
                             <div className="space-y-2">
@@ -454,9 +449,9 @@ export default function SolicitacaoDetalhesPage() {
                             ) : (
                                 <div className="bg-stone-50 rounded-xl p-4 border border-stone-100">
                                     {request.reference_urls ? (
-                                        <a 
-                                            href={request.reference_urls} 
-                                            target="_blank" 
+                                        <a
+                                            href={request.reference_urls}
+                                            target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-blue-600 hover:underline break-all flex items-center gap-2"
                                         >
@@ -495,78 +490,78 @@ export default function SolicitacaoDetalhesPage() {
                 </div>
             </div>
 
-                {/* Sidebar Info */}
-                <div className="space-y-6">
-                    {/* Client Info */}
-                    <div className="bg-white rounded-2xl border border-stone-100 p-6">
-                        <h3 className="font-medium text-stone-900 border-b border-stone-100 pb-2 mb-4">
-                            Cliente
-                        </h3>
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-full bg-stone-900 flex items-center justify-center text-white font-medium">
-                                {subscriber?.name?.[0] || request.user_id[0]}
-                            </div>
-                            <div>
-                                <p className="font-medium text-stone-900 text-sm">
-                                    {subscriber?.name || "Usuário"}
-                                </p>
-                                <p className="text-xs text-stone-500">
-                                    {subscriber?.email}
-                                </p>
-                            </div>
+            {/* Sidebar Info */}
+            <div className="space-y-6">
+                {/* Client Info */}
+                <div className="bg-white rounded-2xl border border-stone-100 p-6">
+                    <h3 className="font-medium text-stone-900 border-b border-stone-100 pb-2 mb-4">
+                        Cliente
+                    </h3>
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-full bg-stone-900 flex items-center justify-center text-white font-medium">
+                            {subscriber?.name?.[0] || request.user_id[0]}
                         </div>
-                        <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                                <span className="text-stone-500">Telefone:</span>
-                                <span className="text-stone-900">{subscriber?.phone || "—"}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-stone-500">Empresa:</span>
-                                <span className="text-stone-900">{subscriber?.company || "—"}</span>
-                            </div>
+                        <div>
+                            <p className="font-medium text-stone-900 text-sm">
+                                {subscriber?.name || "Usuário"}
+                            </p>
+                            <p className="text-xs text-stone-500">
+                                {subscriber?.email}
+                            </p>
                         </div>
                     </div>
-
-                    {/* Timeline */}
-                    <div className="bg-white rounded-2xl border border-stone-100 p-6">
-                         <h3 className="font-medium text-stone-900 border-b border-stone-100 pb-2 mb-4">
-                            Prazos
-                        </h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
-                                    Data de Criação
-                                </label>
-                                <p className="text-stone-900 text-sm">
-                                    {new Date(request.created_at).toLocaleString('pt-BR')}
-                                </p>
-                            </div>
-                            <div>
-                                <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
-                                    Prazo Desejado
-                                </label>
-                                {isEditing ? (
-                                     <select
-                                        name="deadline"
-                                        value={formData.deadline}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm"
-                                    >
-                                        <option value="7_days">7 dias úteis</option>
-                                        <option value="14_days">14 dias úteis</option>
-                                        <option value="flexible">Flexível</option>
-                                    </select>
-                                ) : (
-                                    <p className="text-stone-900 text-sm font-medium">
-                                        {request.deadline === "7_days" ? "7 dias úteis" : 
-                                         request.deadline === "14_days" ? "14 dias úteis" : 
-                                         "Flexível"}
-                                    </p>
-                                )}
-                            </div>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                            <span className="text-stone-500">Telefone:</span>
+                            <span className="text-stone-900">{subscriber?.phone || "—"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-stone-500">Empresa:</span>
+                            <span className="text-stone-900">{subscriber?.company || "—"}</span>
                         </div>
                     </div>
                 </div>
+
+                {/* Timeline */}
+                <div className="bg-white rounded-2xl border border-stone-100 p-6">
+                    <h3 className="font-medium text-stone-900 border-b border-stone-100 pb-2 mb-4">
+                        Prazos
+                    </h3>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
+                                Data de Criação
+                            </label>
+                            <p className="text-stone-900 text-sm">
+                                {new Date(request.created_at).toLocaleString('pt-BR')}
+                            </p>
+                        </div>
+                        <div>
+                            <label className="text-xs font-medium text-stone-500 uppercase block mb-1">
+                                Prazo Desejado
+                            </label>
+                            {isEditing ? (
+                                <select
+                                    name="deadline"
+                                    value={formData.deadline}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm"
+                                >
+                                    <option value="7_days">7 dias úteis</option>
+                                    <option value="14_days">14 dias úteis</option>
+                                    <option value="flexible">Flexível</option>
+                                </select>
+                            ) : (
+                                <p className="text-stone-900 text-sm font-medium">
+                                    {request.deadline === "7_days" ? "7 dias úteis" :
+                                        request.deadline === "14_days" ? "14 dias úteis" :
+                                            "Flexível"}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

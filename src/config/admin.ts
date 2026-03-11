@@ -31,14 +31,14 @@ export async function checkAdminStatus(email: string | undefined): Promise<{ isA
 
         if (error || !data) {
             // Se não está no banco, retorna o fallback hardcoded como admin master
-            return { isAdmin: isHardcodedAdmin, isMaster: isHardcodedAdmin }; 
+            return { isAdmin: isHardcodedAdmin, isMaster: isHardcodedAdmin };
         }
 
         return {
             isAdmin: true,
             isMaster: data.role === 'master'
         };
-    } catch (e) {
+    } catch {
         return { isAdmin: isHardcodedAdmin, isMaster: isHardcodedAdmin };
     }
 }

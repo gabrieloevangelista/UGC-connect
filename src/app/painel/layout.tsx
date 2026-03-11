@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react";
 import { supabase } from "@/lib/supabase";
 import { signOut } from "@/lib/auth";
 import type { User } from "@supabase/supabase-js";
-import { isUserAdmin, checkAdminStatus } from "@/config/admin";
+import { checkAdminStatus } from "@/config/admin";
 
 const navItems = [
     {
@@ -36,12 +36,6 @@ const navItems = [
     },
 ];
 
-const adminNavItem = {
-    label: "Painel Admin",
-    href: "/painel/admin",
-    icon: "solar:shield-keyhole-linear",
-};
-
 export default function PainelLayout({
     children,
 }: {
@@ -51,7 +45,7 @@ export default function PainelLayout({
     const pathname = usePathname();
     const [user, setUser] = useState<User | null>(null);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-    const [isAdmin, setIsAdmin] = useState(false);
+
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -106,7 +100,6 @@ export default function PainelLayout({
 
             setUser(session.user);
             const { isAdmin: admin } = await checkAdminStatus(session.user.email);
-            setIsAdmin(admin);
 
             // Redirecionar se tentar acessar admin sem permissão
             if (pathname.startsWith("/painel/admin") && !admin) {
@@ -129,7 +122,7 @@ export default function PainelLayout({
         });
 
         return () => subscription.unsubscribe();
-    }, [router]);
+    }, [router, pathname]);
 
     const handleSignOut = async () => {
         await signOut();
@@ -247,7 +240,7 @@ export default function PainelLayout({
                         <Icon icon="solar:hamburger-menu-linear" width={24} />
                     </button>
                     <div className="flex items-center gap-3 relative">
-                        <div 
+                        <div
                             className="w-8 h-8 rounded-full bg-stone-900 flex items-center justify-center text-white text-xs font-medium cursor-pointer hover:opacity-80 transition overflow-hidden"
                             onClick={() => setMenuOpen(!menuOpen)}
                         >
