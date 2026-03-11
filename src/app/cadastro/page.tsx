@@ -20,9 +20,91 @@ export default function CadastroPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [companyLookupLoading, setCompanyLookupLoading] = useState(false);
+    const [companyLookupError, setCompanyLookupError] = useState("");
+    const [lastFetchedCnpj, setLastFetchedCnpj] = useState<string | null>(null);
+
+    const digitsOnly = (value: string) => value.replace(/\D/g, "");
+
+    const formatCpf = (digits: string) => {
+        const v = digits.slice(0, 11);
+        const p1 = v.slice(0, 3);
+        const p2 = v.slice(3, 6);
+        const p3 = v.slice(6, 9);
+        const p4 = v.slice(9, 11);
+        if (v.length <= 3) return p1;
+        if (v.length <= 6) return `${p1}.${p2}`;
+        if (v.length <= 9) return `${p1}.${p2}.${p3}`;
+        return `${p1}.${p2}.${p3}-${p4}`;
+    };
+
+    const formatCnpj = (digits: string) => {
+        const v = digits.slice(0, 14);
+        const p1 = v.slice(0, 2);
+        const p2 = v.slice(2, 5);
+        const p3 = v.slice(5, 8);
+        const p4 = v.slice(8, 12);
+        const p5 = v.slice(12, 14);
+        if (v.length <= 2) return p1;
+        if (v.length <= 5) return `${p1}.${p2}`;
+        if (v.length <= 8) return `${p1}.${p2}.${p3}`;
+        if (v.length <= 12) return `${p1}.${p2}.${p3}/${p4}`;
+        return `${p1}.${p2}.${p3}/${p4}-${p5}`;
+    };
+
+    const formatTaxId = (value: string) => {
+        const digits = digitsOnly(value);
+        if (digits.length > 11) return formatCnpj(digits);
+        return formatCpf(digits);
+    };
+
+    const fetchCompanyByCnpj = async (cnpjDigits: string) => {
+        if (cnpjDigits.length !== 14) return;
+        if (lastFetchedCnpj === cnpjDigits) return;
+
+        setCompanyLookupLoading(true);
+        setCompanyLookupError("");
+        setLastFetchedCnpj(cnpjDigits);
+        try {
+            const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjDigits}`);
+            if (!response.ok) {
+                throw new Error("Não foi possível consultar o CNPJ");
+            }
+            const data = (await response.json()) as {
+                razao_social?: string | null;
+                nome_fantasia?: string | null;
+            };
+
+            const companyName = data.nome_fantasia || data.razao_social;
+            if (companyName) {
+                setFormData((prev) => ({ ...prev, company: companyName }));
+            }
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Não foi possível consultar o CNPJ";
+            setCompanyLookupError(message);
+        } finally {
+            setCompanyLookupLoading(false);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+        const { name, value } = e.target;
+
+        if (name === "taxId") {
+            const masked = formatTaxId(value);
+            setFormData((prev) => ({ ...prev, taxId: masked }));
+
+            const digits = digitsOnly(value);
+            if (digits.length === 14) {
+                fetchCompanyByCnpj(digits);
+            } else if (lastFetchedCnpj && digits.length < 14) {
+                setLastFetchedCnpj(null);
+                setCompanyLookupError("");
+            }
+            return;
+        }
+
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -125,7 +207,7 @@ export default function CadastroPage() {
                                 try {
                                     setLoading(true);
                                     await signInWithGoogle();
-                                } catch (err) {
+                                } catch {
                                     setError("Erro ao cadastrar com Google");
                                     setLoading(false);
                                 }
@@ -206,6 +288,7 @@ export default function CadastroPage() {
                                 <label className="text-xs font-medium text-stone-500 uppercase tracking-wide block mb-1.5">
                                     CPF / CNPJ
                                 </label>
+                                <div className="relative">
                                 <input
                                     type="text"
                                     name="taxId"
@@ -213,8 +296,19 @@ export default function CadastroPage() {
                                     onChange={handleChange}
                                     required
                                     placeholder="000.000.000-00"
-                                    className="w-full px-4 py-3 rounded-xl border border-stone-200 text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/20 focus:border-stone-400 transition placeholder:text-stone-400"
+                                    className="w-full px-4 py-3 pr-10 rounded-xl border border-stone-200 text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-900/20 focus:border-stone-400 transition placeholder:text-stone-400"
                                 />
+                                {companyLookupLoading && (
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400">
+                                        <Icon icon="solar:refresh-linear" width={18} className="animate-spin" />
+                                    </div>
+                                )}
+                                </div>
+                                {companyLookupError && (
+                                    <p className="text-[11px] text-amber-600 mt-1.5">
+                                        {companyLookupError}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
