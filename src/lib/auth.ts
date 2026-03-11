@@ -9,7 +9,7 @@ function getBaseUrl() {
         return window.location.origin;
     }
 
-    return "http://localhost:3000";
+    return "https://ugc-connect.vercel.app";
 }
 
 export async function signUp(email: string, password: string) {

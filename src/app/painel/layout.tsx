@@ -25,6 +25,11 @@ const navItems = [
         icon: "solar:clipboard-list-linear",
     },
     {
+        label: "Marketplace",
+        href: "/painel/creators",
+        icon: "solar:users-group-two-rounded-linear",
+    },
+    {
         label: "Configurações",
         href: "/painel/dados",
         icon: "solar:settings-linear",

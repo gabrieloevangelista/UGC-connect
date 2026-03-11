@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
         const origin =
             request.headers.get("origin") ||
             process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://ugc-connect.vercel.app");
         console.log("Criando cobrança no AbacatePay...", { customerId, productName: planData.name });
 
         const billingResponse = await createBilling({
