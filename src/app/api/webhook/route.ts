@@ -14,22 +14,20 @@ export async function POST(request: NextRequest) {
             if (billingId) {
                 let handled = false;
 
-                // Try to update subscription
                 try {
                     await updateSubscriberStatusAdmin(billingId, "PAID");
                     console.log(`✅ Assinatura confirmada para billing: ${billingId}`);
                     handled = true;
-                } catch (e) {
+                } catch {
                     // Ignore error, might not be a subscription
                 }
 
                 if (!handled) {
-                    // Try to update transaction (credits)
                     try {
                         await updateTransactionStatusAdmin(billingId, "COMPLETED");
                         console.log(`✅ Créditos confirmados para billing: ${billingId}`);
                         handled = true;
-                    } catch (e) {
+                    } catch {
                         // Ignore error
                     }
                 }

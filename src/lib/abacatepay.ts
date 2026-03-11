@@ -38,7 +38,7 @@ export interface CreatePixQrCodeData {
         email: string;
         taxId: string;
     };
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }
 
 export async function createCustomer(data: CreateCustomerData) {
