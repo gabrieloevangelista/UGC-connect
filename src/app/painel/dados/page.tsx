@@ -351,9 +351,15 @@ export default function ConfigPage() {
                 throw new Error("Complete seu perfil (Nome, Telefone e CPF/CNPJ) antes de adicionar créditos.");
             }
 
+            const { data: { session } } = await supabase.auth.getSession();
+            const token = session?.access_token;
+
             const res = await fetch('/api/credits/add', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
                 body: JSON.stringify({
                     name: formData.name,
                     email: formData.email,

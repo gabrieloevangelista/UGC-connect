@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createCustomer, createBilling } from "@/lib/abacatepay";
-import { getAdminClient } from "@/lib/supabase-admin";
+import { createClient } from "@supabase/supabase-js";
 
 export async function POST(request: NextRequest) {
     try {
@@ -62,9 +62,28 @@ export async function POST(request: NextRequest) {
         const billingId = billingResponse.data.id;
         const checkoutUrl = billingResponse.data.url;
 
-        // 3. Save Transaction in Supabase (Using Admin Client to bypass RLS)
-        const supabaseAdmin = getAdminClient();
-        const { error: txError } = await supabaseAdmin
+        // 3. Save Transaction in Supabase (Using Authenticated Client to pass RLS)
+        const authHeader = request.headers.get('Authorization');
+
+        let supabaseClient;
+        if (authHeader) {
+            supabaseClient = createClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                {
+                    global: {
+                        headers: {
+                            Authorization: authHeader,
+                        },
+                    },
+                }
+            );
+        } else {
+            // Fallback to anon/admin if no header (might fail RLS, but avoids breaking)
+            supabaseClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+        }
+
+        const { error: txError } = await supabaseClient
             .from("transactions")
             .insert([{
                 user_id: userId,
