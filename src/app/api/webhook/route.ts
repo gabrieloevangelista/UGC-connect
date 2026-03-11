@@ -1,16 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateSubscriberStatusAdmin, updateTransactionStatusAdmin } from "@/lib/supabase-admin";
 
-// AbacatePay webhook events documentation:
-// billing.paid / billing.completed / pix.paid = pagamento confirmado
+// AbacatePay webhook events
+// billing.paid / billing.completed / pix.paid / charge.paid = pagamento confirmado
 export async function POST(request: NextRequest) {
     try {
+        // ── Validação do secret na URL ────────────────────────────────────────
+        const { searchParams } = new URL(request.url);
+        const receivedSecret = searchParams.get("webhookSecret");
+        const expectedSecret = process.env.ABACATEPAY_WEBHOOK_SECRET;
+
+        if (expectedSecret && receivedSecret !== expectedSecret) {
+            console.warn("⛔ Webhook recebido com secret inválido:", receivedSecret);
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        // ─────────────────────────────────────────────────────────────────────
+
         const body = await request.json();
         const { event, data } = body;
 
         console.log("🔔 Webhook AbacatePay recebido:", event, JSON.stringify(data));
 
-        // Aceitar todos os eventos de pagamento confirmado da AbacatePay
         const isPaidEvent = [
             "billing.paid",
             "billing.completed",
@@ -19,7 +29,6 @@ export async function POST(request: NextRequest) {
         ].includes(event);
 
         if (isPaidEvent) {
-            // O billingId pode vir em diferentes formatos dependendo do evento
             const billingId =
                 data?.id ||
                 data?.billing?.id ||
@@ -27,38 +36,36 @@ export async function POST(request: NextRequest) {
                 null;
 
             if (!billingId) {
-                console.warn("⚠️ Webhook recebido sem billingId identificável:", data);
+                console.warn("⚠️ Webhook sem billingId identificável:", data);
                 return NextResponse.json({ received: true, warning: "No billingId found" });
             }
 
-            console.log(`💳 Processando pagamento confirmado para billing: ${billingId}`);
+            console.log(`💳 Pagamento confirmado para billing: ${billingId}`);
 
-            // Tenta primeiro como assinatura (subscribers)
+            // Tenta como assinatura primeiro
             let handled = false;
             try {
                 await updateSubscriberStatusAdmin(billingId, "PAID");
-                console.log(`✅ Assinatura confirmada para billing: ${billingId}`);
+                console.log(`✅ Assinatura confirmada: ${billingId}`);
                 handled = true;
             } catch {
-                // Não era uma assinatura, tentamos como transação de crédito
+                // Não era assinatura, tenta como crédito
             }
 
-            // Se não era assinatura, tenta como transação de créditos
             if (!handled) {
                 try {
                     const tx = await updateTransactionStatusAdmin(billingId, "COMPLETED");
-                    console.log(`✅ Créditos adicionados para user ${tx?.user_id}, billing: ${billingId}, valor: ${tx?.amount}`);
+                    console.log(`✅ Créditos adicionados: user=${tx?.user_id}, billing=${billingId}, valor=${tx?.amount}`);
                     handled = true;
                 } catch (txError) {
-                    console.error(`❌ Erro ao processar transação de crédito para billing ${billingId}:`, txError);
+                    console.error(`❌ Erro ao processar crédito para billing ${billingId}:`, txError);
                 }
             }
 
             if (!handled) {
-                console.warn(`⚠️ Billing ${billingId} não encontrado em nenhuma tabela (assinatura ou crédito).`);
+                console.warn(`⚠️ Billing ${billingId} não encontrado em nenhuma tabela.`);
             }
         } else {
-            // Outros eventos como billing.expired, billing.cancelled etc
             console.log(`ℹ️ Evento não tratado: ${event}`);
         }
 
@@ -72,5 +79,4 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// Vercel: permitir que o webhook seja acessível sem autorização
 export const dynamic = "force-dynamic";
